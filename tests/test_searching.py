@@ -1,6 +1,6 @@
 import pytest
 
-from algorithms.searching import binary_search
+from algorithms.searching.binary_search import binary_search
 
 
 @pytest.mark.parametrize(
