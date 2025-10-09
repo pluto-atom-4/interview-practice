@@ -1,7 +1,7 @@
 """
 Custom Sort Function Explained Step-by-Step
 ------------------------------------------
-The custom_sort_people function sorts a list of Person objects using a flexible approach:
+The custom_sort_object function sorts a list of Person objects using a flexible approach:
 - You can specify any sorting key (e.g., age, height, or a tuple of attributes).
 - You can choose ascending or descending order with the reverse parameter.
 
@@ -34,12 +34,12 @@ class Person:
 
 # Custom sort function
 # Sorts by age, then by height
-def custom_sort_people(people, key=None, reverse=False):
-    n = len(people)
-    result = people[:]
+def custom_sort_object(items, key=None, reverse=False):
+    n = len(items)
+    result = items[:]
     if key is None:
         raise ValueError(
-            "custom_sort_people requires a key function for custom objects like Person."
+            "custom_sort_object requires a key function for custom objects like Person."
         )
     key_fn = key
     for i in range(1, n):
@@ -68,36 +68,36 @@ people = [
 
 if __name__ == "__main__":
     print("Sorted by age, then height:")
-    sorted_people = custom_sort_people(people, key=lambda p: (p.age, p.height))
+    sorted_people = custom_sort_object(people, key=lambda p: (p.age, p.height))
     for person in sorted_people:
         print(person)
 
     print("\nSorted by age, then height (reverse):")
-    sorted_people_reverse = custom_sort_people(
+    sorted_people_reverse = custom_sort_object(
         people, key=lambda p: (p.age, p.height), reverse=True
     )
     for person in sorted_people_reverse:
         print(person)
 
     print("\nSorted by height:")
-    sorted_by_height = custom_sort_people(people, key=lambda p: p.height)
+    sorted_by_height = custom_sort_object(people, key=lambda p: p.height)
     for person in sorted_by_height:
         print(person)
 
     print("\nSorted by height (reverse):")
-    sorted_by_height_reverse = custom_sort_people(
+    sorted_by_height_reverse = custom_sort_object(
         people, key=lambda p: p.height, reverse=True
     )
     for person in sorted_by_height_reverse:
         print(person)
 
     print("\nSorted by age:")
-    sorted_by_age = custom_sort_people(people, key=lambda p: p.age)
+    sorted_by_age = custom_sort_object(people, key=lambda p: p.age)
     for person in sorted_by_age:
         print(person)
 
     print("\nSorted by age (reverse):")
-    sorted_by_age_reverse = custom_sort_people(
+    sorted_by_age_reverse = custom_sort_object(
         people, key=lambda p: p.age, reverse=True
     )
     for person in sorted_by_age_reverse:

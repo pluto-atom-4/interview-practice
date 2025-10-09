@@ -1,7 +1,7 @@
 import pytest
 
 from algorithms.sorting.merge_sort import merge_sort
-from algorithms.sorting.sort_custom_object import Person, custom_sort_people
+from algorithms.sorting.sort_custom_object import Person, custom_sort_object
 
 
 @pytest.mark.parametrize(
@@ -42,7 +42,7 @@ def test_merge_sort(input_arr, expected):
     ],
 )
 def test_custom_sort_people(input_people, expected_names):
-    sorted_people = custom_sort_people(input_people, key=lambda p: (p.age, p.height))
+    sorted_people = custom_sort_object(input_people, key=lambda p: (p.age, p.height))
     assert [p.name for p in sorted_people] == expected_names
 
 
@@ -71,7 +71,7 @@ def test_custom_sort_people(input_people, expected_names):
     ],
 )
 def test_custom_sort_people_reverse(input_people, expected_names):
-    sorted_people = custom_sort_people(
+    sorted_people = custom_sort_object(
         input_people, key=lambda p: (p.age, p.height), reverse=True
     )
     assert [p.name for p in sorted_people] == expected_names
@@ -149,7 +149,7 @@ def test_custom_sort_people_reverse(input_people, expected_names):
     ],
 )
 def test_custom_sort_people_key(input_people, key, expected_names):
-    sorted_people = custom_sort_people(input_people, key=key)
+    sorted_people = custom_sort_object(input_people, key=key)
     assert [p.name for p in sorted_people] == expected_names
 
 
@@ -225,5 +225,5 @@ def test_custom_sort_people_key(input_people, key, expected_names):
     ],
 )
 def test_custom_sort_people_key_reverse(input_people, key, expected_names):
-    sorted_people = custom_sort_people(input_people, key=key, reverse=True)
+    sorted_people = custom_sort_object(input_people, key=key, reverse=True)
     assert [p.name for p in sorted_people] == expected_names
