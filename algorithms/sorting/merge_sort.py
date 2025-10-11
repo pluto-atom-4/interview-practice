@@ -24,7 +24,7 @@ Key advantages:
 Time Complexity: O(n log n) - always
 Space Complexity: O(n) - requires additional space for merging
 
-This algorithm demonstrates important concepts like recursion, divide-and-conquer strategy, 
+This algorithm demonstrates important concepts like recursion, divide-and-conquer strategy,
 and is frequently discussed in technical interviews for its reliability and efficiency.
 """
 

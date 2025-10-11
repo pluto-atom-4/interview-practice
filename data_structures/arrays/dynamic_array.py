@@ -1,16 +1,45 @@
 """
-🧠 Interview Talking Points
-Resizing logic: Doubles capacity when full
+Dynamic Array Data Structure Explained Step-by-Step
+-------------------------------------------------
+A dynamic array is a resizable array that automatically grows when more space is needed, providing the flexibility of lists with efficient random access.
 
-Time complexity:
+Here is how the process works:
 
-append: amortized O(1)
+1. **Initialization**: Start with a small fixed capacity (typically 1) and track both size and capacity.
+   - Size: number of elements currently stored
+   - Capacity: total space available in the underlying array
 
-get: O(1)
+2. **Append**: Add elements to the end of the array.
+   - If there's space, simply add the element
+   - If the array is full, double the capacity and copy all elements to the new array
+   - This doubling strategy ensures amortized O(1) performance
 
-Space efficiency: Starts small, grows as needed
+3. **Insert**: Add an element at any valid index.
+   - Shift all elements from that index to the right
+   - Resize if necessary before insertion
 
-Edge cases: Handles out-of-bounds access
+4. **Remove**: Find and delete the first occurrence of a value.
+   - Locate the element by linear search
+   - Shift all elements after it to the left to fill the gap
+   - Decrease the size counter
+
+5. **Access (Get)**: Retrieve element at any index with bounds checking.
+   - Direct array access provides O(1) performance
+   - Validate index is within bounds before access
+
+Key advantages:
+- Amortized O(1) append operations due to doubling strategy
+- O(1) random access like static arrays
+- Automatic memory management
+
+Time Complexity:
+- Append: O(1) amortized, O(n) worst case (during resize)
+- Insert: O(n) due to shifting elements
+- Remove: O(n) due to search and shifting
+- Get: O(1) direct access
+
+This data structure demonstrates important concepts like amortized analysis, memory management,
+and trade-offs between time and space efficiency, commonly discussed in technical interviews.
 """
 
 
