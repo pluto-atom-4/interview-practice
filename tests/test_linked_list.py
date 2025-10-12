@@ -33,3 +33,28 @@ def test_find():
     ll.append(20)
     assert ll.find(10) is True
     assert ll.find(99) is False
+
+
+def test_reverse():
+    ll = LinkedList()
+    for val in [1, 2, 3, 4]:
+        ll.append(val)
+    ll.reverse()
+    assert ll.to_list() == [4, 3, 2, 1]
+
+
+def test_insert_at_index():
+    ll = LinkedList()
+    ll.append(1)
+    ll.append(3)
+    ll.insert_at_index(1, 2)  # Insert 2 between 1 and 3
+    assert ll.to_list() == [1, 2, 3]
+
+    ll.insert_at_index(0, 0)  # Insert 0 at the beginning
+    assert ll.to_list() == [0, 1, 2, 3]
+
+    ll.insert_at_index(4, 4)  # Insert 4 at the end
+    assert ll.to_list() == [0, 1, 2, 3, 4]
+
+    with pytest.raises(IndexError):
+        ll.insert_at_index(10, 99)  # Invalid index
