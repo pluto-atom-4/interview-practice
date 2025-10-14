@@ -1,3 +1,35 @@
+"""
+Graph Data Structure Explained Step-by-Step
+------------------------------------------
+A graph is a collection of nodes (vertices) connected by edges. It can be directed or undirected.
+
+Here is how the process works:
+
+1. **Add Edge**: Connect two nodes by adding an edge between them.
+   - For undirected graphs, add the connection in both directions
+   - For directed graphs, add the connection from source to destination only
+
+2. **Print Graph**: Display the adjacency list showing each node and its neighbors.
+   - Traverse all nodes and print their connections
+
+3. **Depth-First Search (DFS)**: Explore as far as possible along each branch before backtracking.
+   - Start from a node, mark it as visited
+   - Recursively visit all unvisited neighbors
+
+4. **Breadth-First Search (BFS)**: Explore all neighbors at the current depth before moving deeper.
+   - Use a queue to track nodes to visit
+   - Mark nodes as visited and enqueue their unvisited neighbors
+
+Graphs are fundamental for modeling relationships and networks, and are widely used in computer science interviews.
+
+Time Complexity:
+- Add Edge: O(1)
+- DFS/BFS: O(V + E) where V is vertices and E is edges
+- Space Complexity: O(V + E) for adjacency list
+
+This data structure demonstrates traversal algorithms and is essential for solving connectivity and pathfinding problems.
+"""
+
 from collections import defaultdict, deque
 
 
