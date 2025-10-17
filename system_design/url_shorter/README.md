@@ -232,36 +232,56 @@ strategies!
       inter-service communication using REST or messaging queues. Gradual migration with backward compatibility would
       ensure a smooth transition.
 
-### Bonus
+---
 
-#### How would you handle expired or deleted URLs?
+### Bonus (1) How would you handle expired or deleted URLs?
 
 To handle expired or deleted URLs, I would introduce metadata fields in the database to track expiration and deletion
 status.
 
-##### Database Schema Enhancements:
+#### 📈 Diagram: Handling Expired or Deleted URLs
+
+```mermaid
+flowchart TD
+    A[User accesses short URL] --> B{Is URL marked as deleted?}
+    B -- Yes --> C[Return 410 Gone]
+    B -- No --> D{Has URL expired?}
+    D -- Yes --> E[Return 404 Not Found]
+    D -- No --> F[Redirect to long URL]
+%% Optional icons (if supported by renderer)
+    classDef user fill: #f9f, stroke: #333, stroke-width: 2px;
+    class A user;
+```
+
+This flowchart shows the decision logic:
+
+- If the URL is marked as deleted, the system returns a 410 Gone.
+- If the URL has expired, it returns a 404 Not Found.
+- Otherwise, it redirects to the original long URL.
+
+#### Database Schema Enhancements:
 
 ```sql
 ALTER TABLE urls
     ADD COLUMN expires_at TIMESTAMP,
-ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
+    ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
 ```
 
-##### Backend Logic:
+#### Backend Logic:
 
 - When a short URL is accessed, the backend checks:
     - If `is_deleted = TRUE`, return a 410 Gone response.
     - If `expires_at < NOW()`, return a 404 Not Found or 410 Gone.
 - Optionally, log access attempts to expired/deleted URLs for analytics.
 
-##### API Behavior:
+#### API Behavior:
 
 - Provide endpoints to:
     - Set expiration when creating a short URL.
     - Soft-delete a URL (mark as deleted without removing from DB).
     - Permanently delete if needed (admin-only).
 
-##### Frontend Experience:
+#### Frontend Experience:
 
 - Show a clear message like “This link has expired” or “This URL is no longer available.”
 - Optionally, offer the user a way to regenerate or restore the link if authenticated.
@@ -269,20 +289,22 @@ ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
 This approach ensures graceful handling of expired or deleted URLs while maintaining system integrity and user
 experience.
 
-#### How would you extend the system to support QR code generation?
+---
+
+### Bonus (2) How would you extend the system to support QR code generation?
 
 This feature would be useful for sharing links offline, in print, or on physical products.
 
 To support QR code generation, I would enhance the backend API to generate a QR code for each shortened URL. When a user
 submits a long URL, the backend would return both the short URL and a QR code image.
 
-##### Backend Implementation:
+#### Backend Implementation:
 
 - Use a library like `qrcode` (Node.js), `qrcode-generator` (Python), or `ZXing` (Java) to generate QR codes.
 - Encode the short URL into the QR code.
 - Return the QR code as a base64-encoded image or a downloadable file.
 
-##### API Response Example:
+#### API Response Example:
 
 ```json
 {
@@ -291,13 +313,13 @@ submits a long URL, the backend would return both the short URL and a QR code im
 }
 ```
 
-##### Frontend Integration:
+#### Frontend Integration:
 
 - Display the QR code image alongside the short URL.
 - Allow users to download or copy the QR code.
 - Optionally, provide customization options like size, color, and logo overlay
 
-##### Storage and Caching:
+#### Storage and Caching:
 
 - Store QR codes temporarily or regenerate them on demand.
 - Use CDN or object storage (e.g., AWS S3) for hosting if persistent access is needed.
