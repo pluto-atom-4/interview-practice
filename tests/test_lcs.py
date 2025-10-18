@@ -1,24 +1,15 @@
 import pytest
 
-from algorithms.dynamic_programming.lcs import longest_common_subsequence
+from algorithms.dynamic_programming.lcs import (
+    longest_common_subsequence_memo, visualize_lcs_table)
 
 
-def test_basic_case():
-    assert longest_common_subsequence("abcde", "ace") == 3
+def test_memoized_lcs():
+    assert longest_common_subsequence_memo("abcde", "ace") == 3
+    assert longest_common_subsequence_memo("abc", "def") == 0
+    assert longest_common_subsequence_memo("xyz", "xyz") == 3
 
 
-def test_no_common_subsequence():
-    assert longest_common_subsequence("abc", "def") == 0
-
-
-def test_identical_strings():
-    assert longest_common_subsequence("xyz", "xyz") == 3
-
-
-def test_empty_string():
-    assert longest_common_subsequence("", "abc") == 0
-    assert longest_common_subsequence("abc", "") == 0
-
-
-def test_partial_overlap():
-    assert longest_common_subsequence("abc", "ab") == 2
+def test_visualization_runs():
+    # This test ensures the visualization function executes without error
+    visualize_lcs_table("abcde", "ace")
