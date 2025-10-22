@@ -1,12 +1,11 @@
 repos:
-  - repo: https://github.com/psf/black
-    rev: 24.3.0  # Use latest stable version
-    hooks:
-      - id: black
-        args: [--diff, --color]
-
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.10.1  # Use latest stable version
     hooks:
       - id: isort
 
+  - repo: https://github.com/psf/black
+    rev: 24.3.0  # Use latest stable version
+    hooks:
+      - id: black
+        args: [--diff, --color]
