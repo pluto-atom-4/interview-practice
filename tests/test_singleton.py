@@ -1,3 +1,5 @@
+import threading
+
 import pytest
 
 from ood.design_patterns.singleton import ConfigurationManager
@@ -17,3 +19,19 @@ def test_singleton_data_persistence():
     # Access from another reference
     another_config = ConfigurationManager()
     assert another_config.get("env") == "production"
+
+
+def test_thread_safe_singleton():
+    instances = []
+
+    def create_instance():
+        instances.append(ConfigurationManager())
+
+    threads = [threading.Thread(target=create_instance) for _ in range(10)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    # All instances should be the same
+    assert all(inst is instances[0] for inst in instances)

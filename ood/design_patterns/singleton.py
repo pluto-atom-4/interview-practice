@@ -78,6 +78,8 @@ This pattern demonstrates controlled object creation and is fundamental for
 managing shared resources and maintaining consistent global state in applications.
 """
 
+import threading
+
 
 class SingletonMeta(type):
     """
@@ -86,13 +88,34 @@ class SingletonMeta(type):
 
     _instances = {}
 
+    # NOTE:
+    # The `_lock` variable is a threading.Lock() used to ensure thread safety during lazy initialization.
+    # Without this lock, multiple threads could simultaneously enter the `__call__` method and create multiple instances.
+    # Here's how it works:
+    # - The first `if cls not in cls._instances` check avoids locking for performance in most cases.
+    # - If the instance doesn't exist, we acquire the lock.
+    # - Inside the locked block, we check again (`double-checked locking`) to ensure no other thread created the instance while we were waiting.
+    # - This guarantees that only one instance is ever created, even in multi-threaded environments.
+    _lock: threading.Lock = threading.Lock()
+
     def __call__(cls, *args, **kwargs):
+        # First check without locking for performance
         if cls not in cls._instances:
-            instance = super().__call__(*args, **kwargs)
-            cls._instances[cls] = instance
+            with cls._lock:
+                # Double-checked locking
+                if cls not in cls._instances:
+                    instance = super().__call__(*args, **kwargs)
+                    cls._instances[cls] = instance
         return cls._instances[cls]
 
 
+# NOTE:
+# The parameter `metaclass=SingletonMeta` tells Python to use the SingletonMeta class to construct ConfigurationManager.
+# This means:
+# - Instead of using the default `type` metaclass, Python delegates instance creation to SingletonMeta.
+# - SingletonMeta overrides the `__call__` method to ensure only one instance of ConfigurationManager is ever created.
+# - Any time you call ConfigurationManager(), it checks if an instance already exists and returns it if so.
+# This is how the Singleton behavior is enforced without modifying the ConfigurationManager class itself.
 class ConfigurationManager(metaclass=SingletonMeta):
     """
     Example Singleton class for managing configuration.
