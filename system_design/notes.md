@@ -37,11 +37,22 @@ System design is the process of defining the architecture, components, modules, 
 
 ## 3. Common Interview Questions
 
+### General System Design
 - Design a URL shortening service (like Bitly)
 - Design a scalable chat system (like WhatsApp)
 - Design an e-commerce platform
 - Design a ride-sharing service (like Uber)
 - Design a news feed system (like Facebook)
+
+### AI / Machine Learning
+- Design a recommendation system (like Netflix, Amazon)
+- Design a search ranking system (like Google Search)
+- Design a real-time fraud detection system
+- Design an image recognition service (like Google Photos)
+- Design a machine learning model serving platform
+- Design a personalized content feed (like TikTok, YouTube)
+- Design a chatbot system with NLP capabilities
+- Design an A/B testing platform for ML models
 
 ---
 
