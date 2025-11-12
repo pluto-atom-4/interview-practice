@@ -1,0 +1,196 @@
+# System Design: Search Ranking System (AI/ML-Powered with Azure)
+
+## 🧠 Overview
+
+This system ranks search results using AI/ML models deployed on Azure. It leverages Azure’s scalable cloud infrastructure, data services, and machine learning tools to deliver fast, relevant, and personalized search experiences.
+
+---
+
+## 🎯 Goals
+
+* Deliver highly relevant search results using ML models
+* Scale to billions of documents and millions of queries
+* Support real-time inference and personalization
+* Ensure low latency, high availability, and compliance
+
+---
+
+## 🏗️ Azure-Based Architecture
+
+```text
++------------------+       +------------------+       +------------------+
+|  Frontend (App)  | <---> | Azure API Mgmt   | <---> | Azure Functions  |
++------------------+       +------------------+       +------------------+
+                                  |                          |
+                                  v                          v
+                        +------------------+       +------------------+
+                        | Azure Cognitive  |       | Azure ML Online  |
+                        | Search           |       | Endpoint         |
+                        +------------------+       +------------------+
+                                  |                          |
+                                  v                          v
+                        +------------------+       +------------------+
+                        | Azure Cosmos DB  |       | Azure Feature    |
+                        | / Blob Storage   |       | Store / Cache    |
+                        +------------------+       +------------------+
+
+```
+
+---
+
+## 🧩 Azure Services Breakdown
+
+1. Frontend
+
+* Web/mobile app hosted on Azure App Service or Static Web Apps
+* Sends queries and displays ranked results
+
+2. Azure API Management + Azure Functions
+
+* API gateway for routing and throttling
+* Serverless compute for query preprocessing (tokenization, spell correction, etc.)
+
+3. Azure Cognitive Search
+
+* Indexing and retrieval engine
+* Supports full-text search, filters, scoring profiles
+* Integrates with ML models for custom ranking
+
+4. Azure Machine Learning
+
+* Train and deploy ranking models (e.g., BERT, LambdaMART)
+* Use Online Endpoints for real-time inference
+* Use ML pipelines for retraining and evaluation
+
+5. Azure Cosmos DB / Blob Storage
+
+* Store documents, metadata, embeddings
+* Cosmos DB for structured data; Blob Storage for large unstructured content
+
+6. Azure Feature Store / Azure Cache for Redis
+
+* Store precomputed features (CTR, embeddings, freshness)
+* Cache frequent queries and results for low latency
+
+---
+
+## 🧪 Ranking Models
+
+| Model Type       | Azure Integration                      | Description                        | 
+|------------------|----------------------------------------|------------------------------------|
+| Learning to Rank | Azure ML + Cognitive Search            | Train on click data                | 
+| Deep Neural Nets | Azure ML (Transformers, DNNs)          | Contextual ranking with embeddings | 
+| Hybrid Models    | Azure ML + Business Rules in Functions | Combine ML and heuristics          |
+
+---
+
+## 📊 Data Flow with Azure
+
+1. User submits query via frontend
+2. Azure Functions preprocess query
+3. Azure Cognitive Search retrieves candidates
+4. Azure ML Endpoint ranks candidates
+5. Top results returned to frontend 
+6. Logs stored in Azure Monitor / Log Analytics for feedback loop
+
+---
+
+## ⚙️ Scalability & Performance
+
+* Use **Azure Kubernetes Service (AKS)** for scalable model serving if needed
+* Use **Azure CDN** and **Redis Cache** for fast delivery
+* Use **Azure Synapse Analytics** for large-scale data processing
+
+---
+
+## 📈 Evaluation & Monitoring
+
+* Use Azure ML Metrics and Application Insights to track:
+  - Precision@K, NDCG, CTR
+  - Latency and throughput
+  - Model drift and data quality
+
+---
+
+## 🔐 Privacy & Compliance
+
+* Use Azure Purview for data governance
+* Enable Private Endpoints and Managed Identity
+* Ensure compliance with GDPR, CCPA, and enterprise policies
+
+---
+
+## 🧱 Model Training Pipelines
+
+Training a search ranking model involves collecting user interaction data, engineering features, training and validating models, and deploying them for inference. Azure provides a robust ecosystem to automate and scale this process.
+
+### Pipeline Stages
+
+* Data Ingestion: Azure Data Factory or Synapse Pipelines to pull logs and metadata
+* Data Preprocessing: Azure Databricks or ML Pipelines to clean and normalize
+* Feature Engineering: Generate embeddings, CTR, freshness scores
+* Model Training: Use Azure ML with LightGBM, XGBoost, or BERT
+* Evaluation: Compute NDCG, MRR, Precision@K
+* Registration: Store models in Azure ML Registry
+* Deployment: Serve via Azure ML Online Endpoints or AKS
+* Monitoring & Retraining: Use Azure Monitor and automated ML pipelines
+
+### 🧾 Sample YAML: Azure ML Pipeline Definition
+
+```yaml
+# search_ranking_pipeline.yml
+
+name: search-ranking-pipeline
+description: Train and deploy a search ranking model using Azure ML
+version: 1.0.0
+
+jobs:
+  preprocess_data:
+    type: command
+    component: azureml:preprocess_component@latest
+    inputs:
+      raw_data: azureml:search_logs_dataset@latest
+    outputs:
+      processed_data: azureml:processed_data_output
+    compute: azureml:cpu-cluster
+
+  feature_engineering:
+    type: command
+    component: azureml:feature_engineering_component@latest
+    inputs:
+      processed_data: preprocess_data.outputs.processed_data
+    outputs:
+      features: azureml:features_output
+    compute: azureml:cpu-cluster
+
+  train_model:
+    type: command
+    component: azureml:train_ranking_model@latest
+    inputs:
+      features: feature_engineering.outputs.features
+    outputs:
+      model_output: azureml:ranking_model_output
+    compute: azureml:gpu-cluster
+
+  evaluate_model:
+    type: command
+    component: azureml:evaluate_model_component@latest
+    inputs:
+      model: train_model.outputs.model_output
+      test_data: azureml:test_dataset@latest
+    outputs:
+      evaluation_report: azureml:evaluation_output
+    compute: azureml:cpu-cluster
+
+  register_model:
+    type: command
+    component: azureml:register_model_component@latest
+    inputs:
+      model: train_model.outputs.model_output
+      evaluation: evaluate_model.outputs.evaluation_report
+    compute: azureml:cpu-cluster
+
+settings:
+  default_compute: azureml:cpu-cluster
+  continue_on_step_failure: false
+```
