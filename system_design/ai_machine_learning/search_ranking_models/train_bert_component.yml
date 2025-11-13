@@ -1,0 +1,15 @@
+name: train_ranking_model
+display_name: Train BERT Ranking Model
+type: command
+inputs:
+  train_data:
+    type: uri_file
+outputs:
+  model_output:
+    type: uri_folder
+code: ./train_bert_component
+environment: azureml:bert-env@latest
+command: >-
+  python train.py
+  --train_data ${{inputs.train_data}}
+  --output_dir ${{outputs.model_output}}
