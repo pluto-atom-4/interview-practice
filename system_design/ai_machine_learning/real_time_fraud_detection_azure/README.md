@@ -33,7 +33,6 @@ It includes training pipeline definitions, deployment manifests, and supporting 
 
 ## 🚀 Next Steps
 
-- Extend the pipeline with automated retraining schedules (Azure ML + DevOps).  
 - Add monitoring manifests (Azure Monitor, Application Insights) for latency and drift detection.  
 - Integrate case management workflows (Service Bus + Logic Apps) for analyst review.
 
