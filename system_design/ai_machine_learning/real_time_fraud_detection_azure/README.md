@@ -43,7 +43,50 @@ It includes training pipeline definitions, deployment manifests, and supporting 
   - Metrics: Population Stability Index (PSI), Kolmogorov-Smirnov test  
   - Alerts triggered if drift thresholds are exceeded
 
+-- 
+
+### Business KPI Monitoring
+
+- **business_kpi_monitor.yaml** defines monitoring for key fraud detection KPIs:
+  - **False Positive Rate (FPR):** Alerts if legitimate transactions flagged > 5%.
+  - **Fraud Capture Rate (FCR):** Alerts if fraud detection drops below 90%.
+- These KPIs measure **business impact** and complement technical metrics (latency, drift).
+- Recommended to visualize in **Azure Monitor Workbooks** for trend analysis.
+
 ---
+
+---
+
+## 📊 Monitoring Dashboards
+
+### Fraud Detection Workbook
+
+- **fraud_detection_workbook.json** provides a ready-made **Azure Monitor Workbook** template.  
+- It visualizes:
+  - ⚡ Average request latency (from Application Insights telemetry)  
+  - 📊 Model drift (Population Stability Index)  
+  - 🚫 False Positive Rate (FPR)  
+  - ✅ Fraud Capture Rate (FCR)  
+
+### How to Deploy
+
+1. In the **Azure Portal**, go to **Azure Monitor → Workbooks**.  
+2. Click **New → Advanced Editor**.  
+3. Paste the contents of `fraud_detection_workbook.json`.  
+4. Save the workbook under your resource group.  
+5. Ensure your **Application Insights** and **Custom Metrics** are configured to emit:
+   - `PopulationStabilityIndex`  
+   - `FalsePositiveRate`  
+   - `FraudCaptureRate`  
+
+### Benefits
+
+- Provides a **single pane of glass** for both technical metrics (latency, drift) and business KPIs (FPR, FCR).  
+- Helps analysts quickly identify performance issues and business impact.  
+- Complements alert rules defined in:
+  - [latency_alert_rules_usage.md](./latency_alert_rules_usage.md)  
+  - [model_drift_monitor_usage.md](./model_drift_monitor_usage.md)  
+
 
 ## 🧩 How These Files Fit Into the System Design
 
@@ -62,8 +105,7 @@ It includes training pipeline definitions, deployment manifests, and supporting 
 - Add **drift-triggered retraining pipelines** that automatically launch when drift alerts fire.
 - Integrate with Azure DevOps release pipelines for automatic deployment of new models after successful evaluation.
 - Use approval gates (manual or automated) before promoting models to production.
-- Integrate **case management workflows** (Service Bus + Logic Apps) for analyst review.
-- Build dashboards in **Azure Monitor Workbooks** for unified visibility across latency, drift, and fraud metrics.
+- Add draft a sample screenshot layout description (text-only, not an image) showing how the dashboard panels would appear side by side
 
 ---
 
