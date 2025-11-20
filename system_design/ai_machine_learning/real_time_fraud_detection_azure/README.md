@@ -53,6 +53,11 @@ It includes training pipeline definitions, deployment manifests, and supporting 
 - These KPIs measure **business impact** and complement technical metrics (latency, drift).
 - Recommended to visualize in **Azure Monitor Workbooks** for trend analysis.
 
+### Case Management Workflows
+
+- **case_management_workflow.md** – Design for integrating **Service Bus + Logic Apps** case management for analyst review.  
+  - Intake, enrichment, routing, assignment, SLA/escalation, resolution, and ML feedback loop.  
+  - Security, auditability, and deployment notes included.
 
 ---
 
