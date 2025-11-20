@@ -53,7 +53,6 @@ It includes training pipeline definitions, deployment manifests, and supporting 
 - These KPIs measure **business impact** and complement technical metrics (latency, drift).
 - Recommended to visualize in **Azure Monitor Workbooks** for trend analysis.
 
----
 
 ---
 
@@ -99,13 +98,42 @@ It includes training pipeline definitions, deployment manifests, and supporting 
 
 ---
 
+## 🧭 Quick Interpretation Guide
+
+This guide helps analysts quickly interpret the dashboard signals and decide on next actions:
+
+- **⚡ Latency spikes but drift is stable**  
+  - Likely a **system performance issue** (e.g., overloaded AKS nodes, network bottlenecks).  
+  - Action: Scale AKS replicas, check Redis cache, review API Gateway throttling.
+
+- **📊 Drift increases while latency is normal**  
+  - Model is **seeing new patterns** in transaction data.  
+  - Action: Investigate feature distributions, retrain model, update baseline dataset.
+
+- **🚫 False Positive Rate (FPR) rises above threshold**  
+  - Too many legitimate transactions are being blocked.  
+  - Action: Adjust rules, retrain with more balanced data, add explainability checks.
+
+- **✅ Fraud Capture Rate (FCR) drops below threshold**  
+  - Fraudulent transactions are slipping through undetected.  
+  - Action: Strengthen feature engineering, retrain with recent fraud cases, consider ensemble models.
+
+- **Latency + Drift + FPR all worsening together**  
+  - Indicates a **systemic issue** (e.g., stale model, infrastructure strain, data pipeline errors).  
+  - Action: Trigger full retraining pipeline, scale infrastructure, run end‑to‑end diagnostics.
+
+- **Latency stable, Drift stable, KPIs healthy**  
+  - System is performing as expected.  
+  - Action: Continue monitoring, no immediate intervention needed.
+
+---
+
 ## 🚀 Next Steps
 
 - Integrate case management workflows (Service Bus + Logic Apps) for analyst review.
 - Add **drift-triggered retraining pipelines** that automatically launch when drift alerts fire.
 - Integrate with Azure DevOps release pipelines for automatic deployment of new models after successful evaluation.
 - Use approval gates (manual or automated) before promoting models to production.
-- Add draft a sample screenshot layout description (text-only, not an image) showing how the dashboard panels would appear side by side
 
 ---
 
