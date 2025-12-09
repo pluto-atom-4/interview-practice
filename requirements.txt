@@ -4,3 +4,5 @@ isort
 matplotlib
 seaborn
 tabulate
+numpy
+sckit-learn
