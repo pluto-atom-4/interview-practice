@@ -15,9 +15,20 @@ interview-practice/
  ├── leetcode/ # Individual LeetCode problems
  ├── utils/ # Helper functions and utilities
  ├── tests/ # Pytest-based unit tests
- ├── requirements.txt # Dependencies
+ ├── requirements.txt # (Deprecated) Legacy dependencies file
  └── README.md # You're here!
 ```
+---
+
+## ⚡️ Dependency Management with uv
+
+This project uses [uv](https://github.com/astral-sh/uv) for fast, modern Python dependency management. uv is a drop-in replacement for pip and pip-tools, supporting PEP 621/pyproject.toml natively.
+
+- **Why uv?**
+  - Much faster than pip
+  - Handles modern Python packaging (pyproject.toml)
+  - Simple install for all dependencies and dev tools
+
 ---
 
 ## ⚙️ Setup Instructions
@@ -33,16 +44,25 @@ interview-practice/
    venv\Scripts\activate  # Windows
    # OR
    source venv/bin/activate  # macOS/Linux
-
    ```
-3. **Install dependencies**
+3. **Install uv (if not already installed)**
    ```
-   pip install -r requirements.txt
+   # Recommended: install uv globally
+   pip install uv
+   # Or see https://github.com/astral-sh/uv for other install options
    ```
-4. **Run tests**
+4. **Install dependencies with uv**
+   ```
+   uv pip install .
+   # For dev dependencies (testing, formatting):
+   uv pip install .[dev]
+   ```
+5. **Run tests**
    ```
    pytest
    ```
+
+> **Note:** `requirements.txt` is now deprecated. All dependencies are managed in `pyproject.toml`.
 
 ## 🧹 Code Quality
 This project uses **Black** and **isort** for formatting. Pre-commit hooks are configured to run automatically before each commit.
