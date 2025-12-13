@@ -1,0 +1,37 @@
+from leetcode.trie import trie
+
+
+def test_trie_basic():
+    t = trie()
+    t["insert"]("apple")
+
+    assert t["search"]("apple") is True
+    assert t["search"]("app") is False
+    assert t["startsWith"]("app") is True
+
+    t["insert"]("app")
+    assert t["search"]("app") is True
+
+
+def test_trie_empty():
+    t = trie()
+    assert t["search"]("") is False
+    assert t["startsWith"]("") is True  # empty prefix always valid
+
+
+def test_multiple_words():
+    t = trie()
+    words = ["cat", "car", "cart", "dog"]
+
+    for w in words:
+        t["insert"](w)
+
+    assert t["search"]("cat")
+    assert t["search"]("car")
+    assert t["search"]("cart")
+    assert t["search"]("dog")
+
+    assert not t["search"]("ca")
+    assert t["startsWith"]("ca")
+    assert t["startsWith"]("car")
+    assert not t["startsWith"]("cow")
