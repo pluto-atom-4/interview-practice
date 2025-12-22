@@ -31,62 +31,135 @@ This data structure demonstrates traversal algorithms and is essential for solvi
 """
 
 from collections import defaultdict, deque
+from typing import Generic, Hashable, Iterator, TypeVar
+
+T = TypeVar("T", bound=Hashable)
 
 
-class Graph:
-    def __init__(self, directed=False):
-        self.adj_list = defaultdict(list)
+class Graph(Generic[T]):
+    """A flexible graph data structure supporting directed and undirected graphs.
+
+    Attributes:
+        directed: If True, edges are directed; otherwise, undirected.
+    """
+
+    def __init__(self, directed: bool = False) -> None:
+        """Initialize a graph.
+
+        Args:
+            directed: Whether the graph is directed (default: False).
+        """
+        self.adj_list: dict[T, list[T]] = defaultdict(list)
         self.directed = directed
 
-    def add_edge(self, src, dest):
-        """Adds an edge from src to dest."""
+    def add_edge(self, src: T, dest: T) -> None:
+        """Add an edge between two nodes.
+
+        For undirected graphs, creates a bidirectional edge.
+        For directed graphs, creates a one-way edge from src to dest.
+
+        Args:
+            src: Source node.
+            dest: Destination node.
+        """
         self.adj_list[src].append(dest)
         if not self.directed:
             self.adj_list[dest].append(src)
 
-    def print_graph(self):
-        """Prints the adjacency list of the graph."""
-        for node in self.adj_list:
-            print(f"{node} -> {self.adj_list[node]}")
+    def __repr__(self) -> str:
+        """Return string representation of the graph."""
+        graph_type = "Directed" if self.directed else "Undirected"
+        return f"{self.__class__.__name__}({graph_type}, nodes={len(self.adj_list)})"
 
-    def dfs(self, start, visited=None):
-        """Performs depth-first search from the start node."""
-        if visited is None:
-            visited = set()
-        visited.add(start)
-        print(start, end=" ")
-        for neighbor in self.adj_list[start]:
-            if neighbor not in visited:
-                self.dfs(neighbor, visited)
+    def __iter__(self) -> Iterator[T]:
+        """Iterate over all nodes in the graph."""
+        return iter(self.adj_list)
 
-    def bfs(self, start):
-        """Performs breadth-first search from the start node."""
-        visited = set()
-        queue = deque([start])
-        visited.add(start)
+    def neighbors(self, node: T) -> list[T]:
+        """Get all neighbors of a node.
+
+        Args:
+            node: The node to query.
+
+        Returns:
+            List of neighboring nodes.
+        """
+        return self.adj_list.get(node, [])
+
+    def dfs(self, start: T) -> Iterator[T]:
+        """Depth-first search traversal.
+
+        Yields nodes in DFS order starting from the given node.
+
+        Args:
+            start: Starting node for traversal.
+
+        Yields:
+            Nodes visited in depth-first order.
+        """
+        visited: set[T] = set()
+
+        def _dfs_recursive(node: T) -> Iterator[T]:
+            visited.add(node)
+            yield node
+            for neighbor in self.adj_list[node]:
+                if neighbor not in visited:
+                    yield from _dfs_recursive(neighbor)
+
+        yield from _dfs_recursive(start)
+
+    def bfs(self, start: T) -> Iterator[T]:
+        """Breadth-first search traversal.
+
+        Yields nodes in BFS order starting from the given node.
+
+        Args:
+            start: Starting node for traversal.
+
+        Yields:
+            Nodes visited in breadth-first order.
+        """
+        visited: set[T] = {start}
+        queue: deque[T] = deque([start])
 
         while queue:
             node = queue.popleft()
-            print(node, end=" ")
+            yield node
             for neighbor in self.adj_list[node]:
                 if neighbor not in visited:
                     visited.add(neighbor)
                     queue.append(neighbor)
 
+    def __str__(self) -> str:
+        """String representation of adjacency list."""
+        lines = [f"{node} -> {neighbors}" for node, neighbors in self.adj_list.items()]
+        return "\n".join(lines)
+
 
 if __name__ == "__main__":
-    g = Graph(directed=False)
-    g.add_edge("A", "B")
-    g.add_edge("A", "C")
-    g.add_edge("B", "D")
-    g.add_edge("C", "D")
-    g.add_edge("D", "E")
+    # Create an undirected graph
+    g: Graph[str] = Graph[str](directed=False)
 
-    print("Graph:")
-    g.print_graph()
+    # Add edges
+    edges = [("A", "B"), ("A", "C"), ("B", "D"), ("C", "D"), ("D", "E")]
+    for src, dest in edges:
+        g.add_edge(src, dest)
 
-    print("\nDFS from A:")
-    g.dfs("A")
+    # Display graph info
+    print(f"Graph Info: {g!r}\n")
 
-    print("\n\nBFS from A:")
-    g.bfs("A")
+    # Display adjacency list
+    print("Adjacency List:")
+    print(g)
+
+    # DFS traversal
+    print("\nDFS from A:", " -> ".join(g.dfs("A")))
+
+    # BFS traversal
+    print("BFS from A:", " -> ".join(g.bfs("A")))
+
+    # Get neighbors
+    print(f"\nNeighbors of D: {g.neighbors('D')}")
+
+    # Iterate over all nodes
+    print(f"All nodes: {list(g)}")
