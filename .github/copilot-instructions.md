@@ -9,8 +9,13 @@
 ## File & Documentation Generation
 
 ### Directory Rules (🔴 MUST ENFORCE)
-- **Output directory:** `generated/docs-copilot/` (auto-created)
-- All generated files go to this subdirectory by default
+- **Output directory for markdown files:** `generated/docs-copilot/` (auto-created)
+- **All Copilot-generated markdown files (documentation, guides, summaries, etc.) MUST be saved in this directory by default.**
+- **Do NOT save Copilot-generated markdown files in the project root or any other subdirectory unless the user explicitly requests it or a project structure change requires it.**
+- **Other file types (scripts, code, etc.) may be saved in their relevant subdirectories unless the user requests otherwise.**
+- **Example:**
+    - If you generate a markdown document, save it as `[project root]/generated/docs-copilot/[filename].md`.
+    - Do NOT save as `[project root]/[filename].md` or `[project root]/data_structures/trees/[filename].md` unless the user requests it.
 - **Maximum files per session:** 1
 - **Require explicit user request** before generating
 - Exception: User can override if project structure changes require it
@@ -74,4 +79,3 @@
 - **Last reviewed:** December 10, 2025
 - **Review frequency:** Quarterly or when project structure changes significantly
 - **Update process:** Submit changes via pull request with clear justification
-
