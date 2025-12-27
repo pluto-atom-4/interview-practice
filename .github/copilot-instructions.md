@@ -35,6 +35,20 @@
 
 ---
 
+## Manim Script Output (🔴 MUST ENFORCE)
+
+### Media Output Directory
+- **Output directory for manim media files:** `generated/media/` (auto-created)
+- **All manim scripts MUST output media files (animations, rendered videos, images, etc.) to `[project root]/generated/media/` by default.**
+- **Do NOT output manim media files to the project root or scattered across subdirectories.**
+- **Configure manim scripts with:** `--media_dir generated/media/` or equivalent in manim configuration
+- **Example:**
+    - Render command: `manim -qh --media_dir generated/media/ script.py SceneName`
+    - Output structure: `generated/media/videos/`, `generated/media/images/`, `generated/media/partial_movie_files/`
+- **Subdirectories in `generated/media/`:** Auto-organized by manim (videos, images, etc.)
+
+---
+
 ## Shell & Terminal Configuration
 
 ### Default Shell: bash.exe (Git Bash)
@@ -70,12 +84,13 @@
 2. **Single source of truth** - `README.md` is primary documentation
 3. **No redundant files** - One comprehensive document > many partial ones
 4. **Git Bash always** - Use `bash.exe` for all terminal operations
-5. **Keep root clean** - Generated content → `generated/docs-copilot/`
+5. **Keep root clean** - Generated content → `generated/docs-copilot/` for docs, `generated/media/` for manim media
+6. **Centralized media** - All manim outputs → `generated/media/` directory
 
 ---
 
 ## Document Maintenance
 
-- **Last reviewed:** December 10, 2025
+- **Last reviewed:** December 27, 2025
 - **Review frequency:** Quarterly or when project structure changes significantly
 - **Update process:** Submit changes via pull request with clear justification
