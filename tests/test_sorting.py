@@ -1,20 +1,28 @@
 import pytest
 
 from algorithms.sorting.merge_sort import merge_sort
+from algorithms.sorting.quick_sort import quick_sort
 from algorithms.sorting.sort_custom_object import Person, custom_sort_object
 
+# List of sorting functions to test
+SORT_FUNCS = [quick_sort, merge_sort]
 
+
+@pytest.mark.parametrize("sort_func", SORT_FUNCS)
 @pytest.mark.parametrize(
-    "input_arr,expected",
+    "input_list,expected",
     [
-        ([5, 2, 4, 6, 1, 3], [1, 2, 3, 4, 5, 6]),
-        ([1], [1]),
         ([], []),
-        ([9, 7, 5, 3], [3, 5, 7, 9]),
-    ],
+        ([5], [5]),
+        ([1, 2, 3], [1, 2, 3]),
+        ([5, 4, 3, 2, 1], [1, 2, 3, 4, 5]),
+        ([3, 1, 4, 1, 5, 9, 2], sorted([3, 1, 4, 1, 5, 9, 2])),
+        ([5, 3, 5, 3, 5], sorted([5, 3, 5, 3, 5])),
+        ([-3, -1, -4, 2, 0], sorted([-3, -1, -4, 2, 0])),
+    ]
 )
-def test_merge_sort(input_arr, expected):
-    assert merge_sort(input_arr) == expected
+def test_sorting(sort_func, input_list, expected):
+    assert sort_func(input_list) == expected
 
 
 @pytest.mark.parametrize(
