@@ -14,6 +14,30 @@ Time Complexity:
 - Add Child: O(1)
 - Traversals: O(N) where N is the number of nodes
 
+Traversal Use-Case Scenarios:
+=============================
+
+**Preorder Traversal:**
+- Creating a copy of the tree (process parent before children)
+- Building expression trees or parse trees
+- Serializing trees for storage
+- Printing a tree structure in hierarchical order
+- Evaluating expressions in prefix notation
+
+**Postorder Traversal:**
+- Deleting a tree (delete children before parent)
+- Computing tree properties (size, height) bottom-up
+- Evaluating expressions in postfix notation
+- Calculating node dependencies (child nodes must be processed first)
+- Freeing memory in hierarchical structures
+
+**Level-Order (BFS) Traversal:**
+- Finding shortest path in unweighted trees
+- Printing tree level by level for visualization
+- Building a tree layer representation
+- Finding nodes at a specific depth
+- Breadth-first exploration of hierarchical data
+
 This structure is essential for representing hierarchies, file systems, and more.
 """
 
