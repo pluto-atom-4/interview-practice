@@ -12,6 +12,7 @@ from drills.graph import (
     graph_bfs,
     graph_cycle_detection,
     graph_dfs,
+    graph_lowest_common_ancestor,
     graph_topological_sort,
 )
 
@@ -256,3 +257,22 @@ class TestGraphTopologicalSort:
         graph.add_vertex("C")
         topo_order = graph_topological_sort(graph)
         assert set(topo_order) == {"A", "B", "C"}
+
+class TestGraphLowestCommonAncestor:
+    """ Test lowest common ancestor in the graph. """
+
+    def test_graph_lowest_common_ancestor(self):
+        graph = Graph(directed=True)
+        graph.add_edge("A", "B", 1)
+        graph.add_edge("A", "C", 1)
+        graph.add_edge("B", "D", 1)
+        graph.add_edge("C", "D", 1)
+        lca = graph_lowest_common_ancestor(graph, "A", "B", "C")
+        assert lca == "A"
+
+    def test_graph_lowest_common_ancestor_no_common(self):
+        graph = Graph(directed=True)
+        graph.add_edge("A", "B", 1)
+        graph.add_edge("C", "D", 1)
+        lca = graph_lowest_common_ancestor(graph, "B", "D", "C")
+        assert lca is None

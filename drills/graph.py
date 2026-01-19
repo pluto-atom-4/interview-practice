@@ -123,3 +123,21 @@ def graph_topological_sort(graph: Graph[T]) -> list[T]:
             dfs_post_order(vertex)              # DFS traversal in Post-Order
 
     return post_order[::-1]  # Reverse Post-Order to get Topological Order
+
+def graph_lowest_common_ancestor(graph: Graph[T], root: T, p: T, q: T) -> T | None:
+    def dfs(node: T) -> T | None:
+        if node is None or node == p or node == q:  # Base case: found target or dead end
+            return node
+
+        found_nodes = []  # Track results from child branches
+        for neighbor, _ in graph.adj_list[node]:    # Explore all children
+            result = dfs(neighbor)                  # Recursively search in subtree
+            if result is not None:                  # Child branch found a match
+                found_nodes.append(result)
+
+        if len(found_nodes) >= 2:                   # Both p and q found in different branches = node is LCA
+            return node
+
+        return found_nodes[0] if found_nodes else None  # Pass up result from single branch or None
+
+    return dfs(root)  # Start DFS from root node
