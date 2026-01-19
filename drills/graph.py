@@ -105,3 +105,21 @@ def graph_cycle_detection(graph: Graph[T]) -> bool:
 
     return False    # No cycles detected in entire graph
 
+def graph_topological_sort(graph: Graph[T]) -> list[T]:
+    visited = set()         # Black nodes (fully processed)
+    post_order = []         # Nodes added after all descendants explored
+
+    def dfs_post_order(v: T) -> None:
+        visited.add(v)      # Mark node as visited (being processed)
+
+        for neighbor, _ in graph.adj_list[v]:  # Explore all neighbors (dependencies)
+            if neighbor not in visited:        # White node (unvisited)
+                dfs_post_order(neighbor)       # Recursively explore neighbor
+
+        post_order.append(v)  # PIN-POINT: Add to list ONLY after all neighbors explored (Post-Order)
+
+    for vertex in graph.adj_list:               # Process all vertices for disconnected components
+        if vertex not in visited:               # Start DFS from unvisited White nodes
+            dfs_post_order(vertex)              # DFS traversal in Post-Order
+
+    return post_order[::-1]  # Reverse Post-Order to get Topological Order

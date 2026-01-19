@@ -7,7 +7,13 @@ adjacency list representation, and basic graph operations.
 
 import pytest
 
-from drills.graph import Graph, graph_bfs, graph_cycle_detection, graph_dfs
+from drills.graph import (
+    Graph,
+    graph_bfs,
+    graph_cycle_detection,
+    graph_dfs,
+    graph_topological_sort,
+)
 
 
 class TestGraphInitialization:
@@ -231,3 +237,22 @@ class TestGraphCycles:
         graph.add_edge("A", "A", 1)  # Self-loop creates a cycle
         assert ("A", 1) in graph.adj_list["A"]
         assert graph_cycle_detection(graph) is True
+
+class TestGraphTopologicalSort:
+    """ Test topological sorting of the graph. """
+
+    def test_graph_topological_sort(self):
+        graph = Graph(directed=True)
+        graph.add_edge("A", "B", 1)
+        graph.add_edge("B", "C", 1)
+        graph.add_edge("A", "C", 1)
+        topo_order = graph_topological_sort(graph)
+        assert topo_order.index("A") < topo_order.index("B") < topo_order.index("C")
+
+    def test_graph_topological_sort_no_edges(self):
+        graph = Graph(directed=True)
+        graph.add_vertex("A")
+        graph.add_vertex("B")
+        graph.add_vertex("C")
+        topo_order = graph_topological_sort(graph)
+        assert set(topo_order) == {"A", "B", "C"}
