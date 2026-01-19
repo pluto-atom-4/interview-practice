@@ -79,3 +79,29 @@ def graph_dfs(graph: Graph[T], start: T) -> Iterator[T]:
             for neighbor, _ in reversed(graph.adj_list[vertex]):
                 if neighbor not in visited:
                     stack.append(neighbor)
+                    
+def graph_cycle_detection(graph: Graph[T]) -> bool:
+    visited = set()    # Black nodes (fully processed)
+    rec_stack = set()  # Gray nodes (in current recursion path = active path)
+
+    def dfs(v: T) -> bool:
+        visited.add(v)      # Mark node as being processed (transitioning to Gray)
+        rec_stack.add(v)    # Add to recursion stack (node is Gray: in current path)
+
+        for neighbor, _ in graph.adj_list[v]:
+            if neighbor not in visited:     # White node (unvisited)
+                if dfs(neighbor):           # Recursively explore White node
+                    return True
+            elif neighbor in rec_stack:     # Gray node found = back edge detected = cycle exists
+                return True
+
+        rec_stack.remove(v)     # BACKTRACKING: Remove from Gray set (mark as Black: fully processed)
+        return False
+
+    for vertex in graph.adj_list:
+        if vertex not in visited:           # Start DFS from unvisited White nodes
+            if dfs(vertex):                 # Cycle found in this connected component
+                return True
+
+    return False    # No cycles detected in entire graph
+
