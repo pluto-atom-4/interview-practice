@@ -1,16 +1,81 @@
 """
-Problem Statement:
-Given a string of characters, find the longest substring without repeating characters.
-What's the time complexity?
+## Problem Statement
 
-Example: "abcabcbb" → "abc" (length 3).
+Given a string of characters, find the longest contiguous substring without repeating characters.
+Example: "abcabcbb" → "abc" (length 3). The goal is to achieve O(n) time complexity with a single pass through the string.
+This problem tests sliding window mastery, hash table usage, and efficient pointer manipulation.
 
-Goal: achieve O(n) time complexity with a single pass.
+## Whiteboard Coding Challenge Notes
 
-Whiteboard Coding Challenge Notes:
-Use a sliding window with two pointers: track the longest substring without repeats
-by maintaining the last-seen index of each character in an array, enabling one-pass
-linear-time processing.
+* For this problem, I'm using the **Sliding Window with Character Tracking** approach:
+
+This technique uses two pointers and a hash table to maintain the rightmost index of each character,
+allowing us to efficiently skip over repeated characters without rescanning. By tracking where each
+character was last seen, we can jump the left pointer directly past previous occurrences, guaranteeing
+one pass through the string.
+
+* Key Concepts:
+
+  - **Character Tracking with Hash Table (Why?):**
+Why: Enables O(1) lookup of whether a character exists in current window and where it was last seen.
+How: Use a dictionary mapping each character to its most recent index. When a repeat is found, immediately
+move the left pointer past the previous occurrence. This eliminates nested loops that would cause O(n²) complexity.
+
+  - **Left Pointer Advancement (Why?):**
+Why: Moves the window boundary when a repeated character is encountered, shrinking the window to exclude the repeat.
+How: When character at position i is already in the window (last_seen[char] >= start), move start to last_seen[char] + 1.
+This ensures every character in the active window [start, i] is unique.
+
+  - **Max Length Tracking (Why?):**
+Why: Preserves the best solution found so far, requiring minimal memory overhead.
+How: After each character addition, check if current window length (i - start + 1) exceeds max_length.
+If so, update max_length and store start_pos/end_pos for reconstruction.
+
+* Logic:
+
+1. Initialize empty hash table for character tracking, set start pointer to 0, reset max_length to 0
+2. Iterate through each character by index (i) in the string
+3. For each character, check if it exists in the current window (last_seen[char] >= start)
+4. If character repeats in window, move start pointer to position after the previous occurrence (last_seen[char] + 1)
+5. Update last_seen[char] to current index i (every character's position gets refreshed)
+6. Calculate current window length and compare against max_length
+7. If current length exceeds max_length, store new maximum and record current boundaries
+8. Return the longest substring with its metadata (substring content, start index, end index, length)
+
+* **30-Second Pitch**:
+
+I use a sliding window with character tracking—a dictionary stores each character's most recent index. As I iterate,
+if I encounter a repeated character in my current window, I jump my start pointer directly past its previous occurrence.
+This avoids rescanning and keeps everything linear. I track the longest valid window I've seen, and return it with
+its boundaries and length. The beauty is one pass through the string with O(k) space, where k is unique characters.
+
+* **Rapid-Fire Version**:
+
+- Sliding window: two pointers (start, end via loop index)
+- Hash table: maps character → most recent index for O(1) repeats detection
+- Repeat handling: move left pointer directly past previous occurrence, no nested loops
+- Window shrinking: happens implicitly when start jumps forward
+- Single pass: O(n) time because each character is visited exactly once
+- Space trade-off: O(k) space where k ≤ 256 (unique characters)
+
+* **Ultra-Minimal One-Liner**:
+
+Sliding window with hash table tracking character positions enables one-pass O(n) detection of longest unique substring.
+
+* **Complexity Analysis**:
+
+- **Time Complexity:** O(n) where n = string length. Each character is visited exactly once by the right pointer (loop),
+  and the left pointer only moves forward monotonically. No inner loops or rescans occur.
+
+- **Space Complexity:** O(min(k, m)) where k = unique characters in string, m = max_char_set limit (default 256).
+  The hash table stores at most 256 keys (or fewer if string has fewer unique characters). Independent of input size.
+
+* **Use Cases**:
+
+- Interview screening: Tests fundamental data structure knowledge (hash tables, sliding window)
+- Substring optimization: Problems requiring longest/shortest substrings with constraints
+- Pattern detection: Finding non-repeating sequences in DNA strands, network packets, or log analysis
+- Video streaming: Finding longest buffer windows without frame duplication
 """
 from typing import NamedTuple
 
