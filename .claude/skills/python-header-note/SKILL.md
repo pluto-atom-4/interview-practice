@@ -1,20 +1,38 @@
-# SKILL: Add Comprehensive Header Note to Python Scripts for Interview Preparation
-
-## Overview
-This skill provides a systematic approach to adding professional, interview-ready header notes to Python implementation files. The header serves as both documentation and a quick reference guide for technical interviews.
-
-## Purpose
-Transform a Python script into an interview-preparation asset by adding a structured header that:
-- Clearly articulates the problem and solution approach
-- Explains design decisions and key concepts
-- Provides multiple explanation formats (technical, pitch, rapid-fire)
-- Serves as a confidence booster and communication aid during interviews
-
+---
+name: python-header-note
+description: "Add comprehensive header notes to Python scripts with problem statements, algorithm explanations, and multiple summary variations (30-second pitch, rapid-fire version, and ultra-minimal one-liner). Use this skill when adding detailed documentation headers to Python interview practice files, algorithm implementations, or educational scripts."
+license: Proprietary. LICENSE.txt has complete terms
 ---
 
-## Header Structure Template
+# Python Header Note Skill
 
-Use this standardized structure for all Python interview preparation files:
+## Overview
+
+This skill adds comprehensive header documentation to Python scripts, ideal for interview preparation, algorithm implementations, and educational content. It creates structured header notes with multiple summary levels and detailed explanations.
+
+## When to Use
+
+Use this skill when you need to:
+- Add detailed header notes to Python algorithm files
+- Document interview practice problems and solution approach
+- Document design decisions and key concepts
+- Document multiple explanation formats (technical, pitch, rapid-fire)
+- utilize the note as a confidence booster and communication aid during interviews
+
+> **For usage instructions:** See [README.md](README.md) for detailed workflows on invoking this skill in Claude Code Agent and Copilot CLI.
+
+## Header Structure
+
+A python-header-note should include:
+
+1. **Problem Statement** - Clear description of what the code solves
+2. **Algorithm Explanation** - How the solution works
+3. **Summary Variations**:
+   - 30-second pitch (medium detail for quick understanding)
+   - Rapid-fire version (key points only)
+   - Ultra-minimal one-liner (core concept in a sentence)
+
+## Example Format
 
 ```python
 """
@@ -186,68 +204,6 @@ Before finalizing a header note, verify:
 - [ ] No code implementation details in header (implementation follows below)
 - [ ] Consistent formatting and markdown structure
 
----
-
-## Integration with Solution Files
-
-### File Organization
-```
-.claude/skills/interview-preparation/
-├── SKILL.md                    (This file - template and guide)
-├── README.md                   (Index of all skills)
-└── [solution-name].md          (Individual solution guide)
-```
-
-### Python Script Format
-```python
-"""
-[Comprehensive header from this skill]
-"""
-
-def solution_function(params):
-    """Implementation with docstring."""
-    # Code implementation
-    pass
-
-def helper_function():
-    """Helper with docstring."""
-    pass
-```
-
----
-
-## Usage in Claude Code Agent
-
-### Reference in prompts:
-```
-@merge-sorted-arrays Add a comprehensive header note following @SKILL for interview preparation
-```
-
-### Skill tagging:
-- `#interview` `#algorithm` `#header-note`
-- `#[language]` (e.g., `#python`)
-- `#[topic]` (e.g., `#array`, `#gap-method`)
-
----
-
-## Real-World Application Examples
-
-This skill applies to any interview coding problem:
-
-### Covered Problem Types
-- ✅ Array/String manipulation
-- ✅ Graph/Tree traversal
-- ✅ Dynamic programming
-- ✅ Sorting/Searching
-- ✅ Design patterns
-- ✅ System design components
-- ✅ Optimization problems
-
-### Adaptable Sections
-- Algorithm name changes
-- Concept count varies (typically 2-3 key ones)
-- Complexity analysis remains consistent
-- Interview talking points universal
 
 ---
 
