@@ -33,42 +33,38 @@ If so, update max_length and store start_pos/end_pos for reconstruction.
 
 * Logic:
 
-1. Initialize empty hash table for character tracking, set start pointer to 0, reset max_length to 0
-2. Iterate through each character by index (i) in the string
-3. For each character, check if it exists in the current window (last_seen[char] >= start)
-4. If character repeats in window, move start pointer to position after the previous occurrence (last_seen[char] + 1)
-5. Update last_seen[char] to current index i (every character's position gets refreshed)
-6. Calculate current window length and compare against max_length
-7. If current length exceeds max_length, store new maximum and record current boundaries
-8. Return the longest substring with its metadata (substring content, start index, end index, length)
+1. Initialize `start` pointer (window beginning), `max_length` and `longest_substring` trackers
+2. Iterate through each character with its index `i`
+3. Check if the character exists in `last_seen` AND its index is within current window (`>= start`)
+4. If yes, move `start` to one position after the character's previous occurrence (skip the old instance)
+5. Update `last_seen[char]` with current index
+6. Calculate current window length and update max_length and longest_substring if improved
+7. Return the longest_substring after processing all characters
 
 * **30-Second Pitch**:
 
-I use a sliding window with character tracking—a dictionary stores each character's most recent index. As I iterate,
-if I encounter a repeated character in my current window, I jump my start pointer directly past its previous occurrence.
-This avoids rescanning and keeps everything linear. I track the longest valid window I've seen, and return it with
-its boundaries and length. The beauty is one pass through the string with O(k) space, where k is unique characters.
+I use a sliding window with character tracking—a dictionary stores each character's most recent index.
+As I iterate through the string, when I encounter a repeated character within the current
+window, I move the start pointer to skip the old occurrence. This ensures each character
+is visited twice at most—once to expand the window, once as the start pointer. The time
+complexity is O(n) with a single pass and O(1) space (at most 256 ASCII characters).
 
 * **Rapid-Fire Version**:
 
-- Sliding window: two pointers (start, end via loop index)
-- Hash table: maps character → most recent index for O(1) repeats detection
-- Repeat handling: move left pointer directly past previous occurrence, no nested loops
-- Window shrinking: happens implicitly when start jumps forward
-- Single pass: O(n) time because each character is visited exactly once
-- Space trade-off: O(k) space where k ≤ 256 (unique characters)
+- Sliding window approach with two pointers (start and end via loop index)
+- Hash table stores last seen index, not just presence
+- When duplicate found within window: move start past previous occurrence
+- Single pass: O(n) time, O(1) space (bounded character set)
+- Track max_length and longest_substring during iteration
 
 * **Ultra-Minimal One-Liner**:
 
-Sliding window with hash table tracking character positions enables one-pass O(n) detection of longest unique substring.
+- Sliding window with character position tracking in a hash table finds the longest unique substring in O(n) time by jumping past repeated characters.
 
 * **Complexity Analysis**:
 
-- **Time Complexity:** O(n) where n = string length. Each character is visited exactly once by the right pointer (loop),
-  and the left pointer only moves forward monotonically. No inner loops or rescans occur.
-
-- **Space Complexity:** O(min(k, m)) where k = unique characters in string, m = max_char_set limit (default 256).
-  The hash table stores at most 256 keys (or fewer if string has fewer unique characters). Independent of input size.
+- **Time Complexity:** O(n) – Single pass through the string; each character is visited at most twice (once by end pointer, once by start pointer advancing past it)
+- **Space Complexity:** O(min(m, k)) where m is string length and k is the character set size; in practice O(1) for fixed alphabets (≤256 ASCII, ≤26 lowercase, etc.)
 
 * **Use Cases**:
 
@@ -77,20 +73,9 @@ Sliding window with hash table tracking character positions enables one-pass O(n
 - Pattern detection: Finding non-repeating sequences in DNA strands, network packets, or log analysis
 - Video streaming: Finding longest buffer windows without frame duplication
 """
-from typing import NamedTuple
 
 
-class LongestSubstringResult(NamedTuple):
-    substring: str
-    start: int
-    end: int
-    length: int
-
-def find_longest_unique_substring(
-    s: str,
-    max_char_set: int = 256,  # Allow limiting character set
-    allowed_chars: set = None  # Optional character filter
-) -> LongestSubstringResult:
+def find_longest_unique_substring(s: str) -> str:
     """
     Finds the longest substring without repeating characters.
 
@@ -99,88 +84,31 @@ def find_longest_unique_substring(
 
     Args:
         s (str): Input string.
-        max_char_set (int): Maximum number of unique characters allowed in the result.
-                           If exceeded, the sliding window resets. Default: 256 (ASCII).
-        allowed_chars (set): Optional set of allowed characters to consider.
-                           If provided, only characters in this set are processed.
-                           Default: None (all characters allowed).
 
     Returns:
-        LongestSubstringResult: Named tuple containing:
-            - substring: The longest substring without repeating characters
-            - start: Start index of the substring
-            - end: End index of the substring
-            - length: Length of the substring
-
-    Examples:
-        >>> find_longest_unique_substring("abcabcbb")
-        LongestSubstringResult(substring='abc', start=0, end=2, length=3)
-
-        >>> find_longest_unique_substring("abcabcbb", allowed_chars={'a', 'b'})
-        LongestSubstringResult(substring='ab', start=0, end=1, length=2)
-
-        >>> find_longest_unique_substring("abcdef", max_char_set=3)
-        LongestSubstringResult(substring='abc', start=0, end=2, length=3)
+        str: The longest substring without repeating characters.
     """
     if not s:
-        return LongestSubstringResult("", 0, 0, 0)
-    
-    # Validate max_char_set parameter
-    if max_char_set <= 0:
-        raise ValueError("max_char_set must be positive")
+        return ""
 
     last_seen = {}  # Dictionary to store the last seen index of each character
-    start = 0       # Start index of the current substring
+    start = 0  # Start index of the current substring
     max_length = 0  # Length of the longest substring found
     longest_substring = ""  # The longest substring without repeating characters
-    start_pos = 0   # Start index of the longest substring
-    end_pos = 0     # End index of the longest substring
 
-    # Sliding window: for each character, check if it exists in the current window (last_seen[char] >= start).
-    # If yes, move `start` to skip the old occurrence. Update `last_seen` with current index.
-    # Track the longest substring without repeating characters.
-    # Time: O(n), Space: O(k) where k = min(unique characters, max_char_set).
+    # For each character at index `end`, check if it exists in the current window (using `lastSeen[c] >= start`). If yes, move `start` to skip the old occurrence. Update `lastSeen` and compute window length. Returns the longest unique substring. Time: O(n), Space: O(1) with ASCII assumption (fixed 256 characters).
     for i, char in enumerate(s):
-        # Skip characters not in allowed_chars if the filter is provided
-        if allowed_chars is not None and char not in allowed_chars:
-            continue
-
-        # If we exceed max_char_set limit, shrink the window from the left
-        if len(last_seen) >= max_char_set and char not in last_seen:
-            # Remove the leftmost character from tracking
-            left_char = s[start]
-            if left_char in last_seen:
-                del last_seen[left_char]
-            start += 1
-
-        # Handle repeated character within the current window
         if char in last_seen and last_seen[char] >= start:
             # Character is repeated within the current window
-            start = last_seen[char] + 1  # Move start to one position after the last occurrence
+            start = (
+                last_seen[char] + 1
+            )  # Move start to one position after the last occurrence
 
         last_seen[char] = i  # Update the last seen index of the character
 
-        # Calculate current substring length by counting allowed characters between start and i
-        if allowed_chars is not None:
-            # Count only allowed characters in current window
-            current_length = sum(1 for j in range(start, i + 1) if s[j] in allowed_chars)
-        else:
-            # Count all characters in current window
-            current_length = i - start + 1
-
+        current_length = i - start + 1  # Calculate current substring length
         if current_length > max_length:
             max_length = current_length
-            # Extract substring with only allowed characters if filter is applied
-            if allowed_chars is not None:
-                longest_substring = "".join(s[j] for j in range(start, i + 1) if s[j] in allowed_chars)
-            else:
-                longest_substring = s[start:i + 1]
-            start_pos = start  # Track start index of longest substring
-            end_pos = i  # Track end index of longest substring
+            longest_substring = s[start : i + 1]  # Update longest substring
 
-    return LongestSubstringResult(
-        substring=longest_substring,
-        start=start_pos,
-        end=end_pos,
-        length=max_length
-    )
+    return longest_substring
