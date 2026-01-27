@@ -7,14 +7,11 @@ adjacency list representation, and basic graph operations.
 
 import pytest
 
-from drills.graph import (
-    Graph,
-    graph_bfs,
-    graph_cycle_detection,
-    graph_dfs,
-    graph_lowest_common_ancestor,
-    graph_topological_sort,
-)
+from drills.detect_graph_cycle import graph_cycle_detection
+from drills.find_lowest_common_ancestor import graph_lowest_common_ancestor
+from drills.graph import Graph
+from drills.topological_sort_graph import graph_topological_sort
+from drills.traverse_graph import graph_bfs, graph_dfs
 
 
 class TestGraphInitialization:
