@@ -1,3 +1,73 @@
+"""
+## Problem Statement
+
+Implement a generic Graph data structure supporting both directed and undirected graphs with weighted edges.
+The goal is to provide core graph operations (add/remove vertices and edges) as the foundation for graph algorithms.
+This tests understanding of adjacency lists, graph representation, and data structure design.
+
+## Whiteboard Coding Challenge Notes
+
+* For this problem, I'm using an **Adjacency List representation**:
+
+The adjacency list is chosen over an adjacency matrix because it scales efficiently for sparse graphs (common in interviews) 
+and provides O(V + E) iteration. Each vertex maps to a list of (neighbor, weight) tuples, making edge operations intuitive.
+
+* Key Concepts:
+
+  - Why adjacency list with (neighbor, weight) tuples?
+The tuple pairing isolates weight data from neighbor identity, enabling edge removal by exact match and simplifying 
+weight-based queries. This design supports Dijkstra's algorithm and other weighted graph algorithms naturally.
+
+  - Why use defaultdict(list) for initialization?
+defaultdict automatically initializes missing vertices with empty lists, eliminating explicit None checks during 
+edge iteration. This reduces defensive coding and prevents KeyError exceptions during traversal.
+
+  - Why check for edge existence before adding?
+This prevents duplicate edges that could skew algorithm results (particularly in cycle detection). The check ensures 
+each unique edge exists exactly once, maintaining graph invariants.
+
+* Logic:
+
+1. Initialize adjacency list as defaultdict(list) to support automatic vertex creation
+2. Store edges as (neighbor, weight) tuples for clean separation of node and weight data
+3. When adding an edge: ensure both vertices exist, create tuple, check for duplicates, add to source's list
+4. For undirected graphs: automatically add reverse edge from destination back to source
+5. When removing: find and delete exact matching edge tuple; remove reverse edge if undirected
+6. When removing vertex: delete its entry and purge all references from other vertices
+
+* **30-Second Pitch**:
+
+I'm using an adjacency list with weighted edge tuples. Each vertex maps to a list of (neighbor, weight) pairs. 
+When adding edges, I ensure both endpoints exist, prevent duplicates, and automatically mirror edges for undirected graphs. 
+This gives clean O(1) vertex lookup and O(degree) edge iteration, scaling well for sparse graphs.
+
+* **Rapid-Fire Version**:
+
+- Adjacency list with (neighbor, weight) tuples
+- Automatic vertex creation via defaultdict
+- Duplicate edge prevention via existence check
+- Undirected graphs auto-mirror edges
+- Vertex removal cascades through all incident edges
+
+* **Ultra-Minimal One-Liner**:
+
+Generic adjacency list graph supporting weighted directed/undirected edges with O(1) vertex and O(degree) edge operations.
+
+* **Complexity Analysis**:
+
+- **Time Complexity:** 
+  - add_vertex: O(1) 
+  - add_edge: O(degree) for duplicate check, O(1) amortized for append
+  - remove_edge: O(degree) for search and removal
+  - remove_vertex: O(V + E) to purge all references
+- **Space Complexity:** O(V + E) for storing vertices and all edges in adjacency list
+
+* **Use Cases**:
+
+Foundation for graph algorithms (BFS, DFS, Dijkstra, cycle detection, topological sort). Common in interview questions 
+requiring graph manipulation or traversal, particularly when weighted edge support is needed.
+"""
+
 from collections import defaultdict, deque
 from typing import Generic, Hashable, Iterator, TypeVar
 
@@ -52,92 +122,3 @@ class Graph(Generic[T]):
         for src in self.adj_list:
             self.adj_list[src] = [edge for edge in self.adj_list[src] if edge[0] != vertex]
 
-def graph_bfs(graph: Graph[T], start: T) -> Iterator[T]:
-    visited = set()
-    queue = deque([start])
-    visited.add(start)
-
-    while queue:
-        vertex = queue.popleft()
-        yield vertex
-
-        for neighbor, _ in graph.adj_list[vertex]:
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
-
-def graph_dfs(graph: Graph[T], start: T) -> Iterator[T]:
-    visited = set()
-    stack = [start]
-
-    while stack:
-        vertex = stack.pop()
-        if vertex not in visited:
-            visited.add(vertex)
-            yield vertex
-
-            for neighbor, _ in reversed(graph.adj_list[vertex]):
-                if neighbor not in visited:
-                    stack.append(neighbor)
-                    
-def graph_cycle_detection(graph: Graph[T]) -> bool:
-    visited = set()    # Black nodes (fully processed)
-    rec_stack = set()  # Gray nodes (in current recursion path = active path)
-
-    def dfs(v: T) -> bool:
-        visited.add(v)      # Mark node as being processed (transitioning to Gray)
-        rec_stack.add(v)    # Add to recursion stack (node is Gray: in current path)
-
-        for neighbor, _ in graph.adj_list[v]:
-            if neighbor not in visited:     # White node (unvisited)
-                if dfs(neighbor):           # Recursively explore White node
-                    return True
-            elif neighbor in rec_stack:     # Gray node found = back edge detected = cycle exists
-                return True
-
-        rec_stack.remove(v)     # BACKTRACKING: Remove from Gray set (mark as Black: fully processed)
-        return False
-
-    for vertex in graph.adj_list:
-        if vertex not in visited:           # Start DFS from unvisited White nodes
-            if dfs(vertex):                 # Cycle found in this connected component
-                return True
-
-    return False    # No cycles detected in entire graph
-
-def graph_topological_sort(graph: Graph[T]) -> list[T]:
-    visited = set()         # Black nodes (fully processed)
-    post_order = []         # Nodes added after all descendants explored
-
-    def dfs_post_order(v: T) -> None:
-        visited.add(v)      # Mark node as visited (being processed)
-
-        for neighbor, _ in graph.adj_list[v]:  # Explore all neighbors (dependencies)
-            if neighbor not in visited:        # White node (unvisited)
-                dfs_post_order(neighbor)       # Recursively explore neighbor
-
-        post_order.append(v)  # PIN-POINT: Add to list ONLY after all neighbors explored (Post-Order)
-
-    for vertex in graph.adj_list:               # Process all vertices for disconnected components
-        if vertex not in visited:               # Start DFS from unvisited White nodes
-            dfs_post_order(vertex)              # DFS traversal in Post-Order
-
-    return post_order[::-1]  # Reverse Post-Order to get Topological Order
-
-def graph_lowest_common_ancestor(graph: Graph[T], root: T, p: T, q: T) -> T | None:
-    def dfs(node: T) -> T | None:
-        if node is None or node == p or node == q:  # Base case: found target or dead end
-            return node
-
-        found_nodes = []  # Track results from child branches
-        for neighbor, _ in graph.adj_list[node]:    # Explore all children
-            result = dfs(neighbor)                  # Recursively search in subtree
-            if result is not None:                  # Child branch found a match
-                found_nodes.append(result)
-
-        if len(found_nodes) >= 2:                   # Both p and q found in different branches = node is LCA
-            return node
-
-        return found_nodes[0] if found_nodes else None  # Pass up result from single branch or None
-
-    return dfs(root)  # Start DFS from root node
