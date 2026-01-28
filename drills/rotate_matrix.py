@@ -76,6 +76,17 @@ of swapped dimensions.
 - Data visualization: reorienting data matrices for different presentations
 - Technical interviews: tests 2D array indexing, coordinate geometry, and problem-solving skills
 
+* **Integration into Factory Floor Layout Simulation**:
+
+This rotation function is essential for visualizing factory floor layouts during work order processing.
+
+When a factory floor needs to be rotated for different viewing angles or workstation reorientation:
+- Rotate the work order grid 90 degrees to show different production line layouts
+- Update machine position matrices without modifying original floor schematics
+- Support dynamic floor reconfiguration for shift changes or temporary setups
+- Maintain historical floor layouts by creating new rotated copies instead of mutations
+- Enable multi-angle monitoring dashboards that display the same floor from different orientations
+- Optimize workstation assignments by visualizing rotated layout possibilities before committing changes
 """
 
 from __future__ import annotations
