@@ -21,7 +21,7 @@ For massive graphs, clients might only need the first few nodes, making generato
 the full traversal. This supports infinite graphs and reduces memory footprint significantly.
 
   - Why deque for BFS vs. list for DFS?
-Deques support O(1) popleft() for queue behavior; lists don't (O(n)). For DFS, stack behavior (pop from end) is O(1) 
+Deque support O(1) popleft() for queue behavior; lists don't (O(n)). For DFS, stack behavior (pop from end) is O(1)
 on lists. Using the right data structure ensures both algorithms run in O(V + E) without hidden quadratic costs.
 
   - Why reverse neighbors before appending in DFS?
@@ -65,7 +65,7 @@ BFS and DFS generators enable lazy graph exploration level-by-level (BFS) or dep
 
 * **Use Cases**:
 
-Finding shortest paths in unweighted graphs (BFS), detecting connected components, maze solving, network broadcasting, 
+Finding the shortest paths in unweighted graphs (BFS), detecting connected components, maze solving, network broadcasting,
 social network analysis (degrees of separation), exploring game trees, checking graph connectivity, topological sorting preparation.
 """
 
@@ -78,6 +78,20 @@ T = TypeVar('T')
 
 
 def graph_bfs(graph: Graph[T], start: T) -> Iterator[T]:
+    """
+    Key Concepts:
+    - Why visited set?
+        Prevents cycles and redundant processing in graphs with cycles or multiple paths
+    - Why yield instead of building a list?
+        Generators allow lazy evaluation: results are produced on-demand rather than computing the entire traversal upfront
+    - Why deque for BFS ?
+        Deque supports O(1) popleft() for queue behavior; lists don't (O(n))
+
+    30-Second Pitch:
+    BFS explores level-by-level using a deque queue—all immediate neighbors first, then their neighbors, creating a breadth-wise expansion.
+    Yields nodes one at a time, enabling lazy evaluation without building
+
+    """
     visited = set()
     queue = deque([start])
     visited.add(start)
