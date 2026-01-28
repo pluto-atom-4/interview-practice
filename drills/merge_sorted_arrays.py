@@ -1,13 +1,16 @@
 """
 ## Problem Statement:
 
-Merge two sorted arrays in place without using extra space. The goal is to achieve this efficiently by minimizing the number of comparisons and swaps. This is a common problem in technical interviews, testing your understanding of in-place algorithms and optimization techniques.
+Merge two sorted arrays in place without using extra space.
+The goal is to achieve this efficiently by minimizing the number of comparisons and swaps.
+This is a common problem in technical interviews, testing your understanding of in-place algorithms and optimization techniques.
 
 ## Whiteboard Coding Challenge Notes:
 
 * For this problem, I'm using the GAP method inspired by Shell Sort:
 
-The GAP method starts by comparing elements far apart and gradually reduces the gap until it becomes 1. This ensures that large inversions are resolved early, leading to fewer swaps in the later stages.
+The GAP method starts by comparing elements far apart and gradually reduces the gap until it becomes 1.
+This ensures that large inversions are resolved early, leading to fewer swaps in the later stages.
 
 * Key Concepts:
 
@@ -42,7 +45,7 @@ from __future__ import annotations
 from typing import List
 
 
-def merge_sorted_arrays_in_place(a: List[int], b: List[int]) -> None:
+def merge_sorted_arrays_in_place(list_a: List[int], list_b: List[int]) -> None:
     """
     Merge two sorted arrays in place using the GAP method.
 
@@ -51,16 +54,16 @@ def merge_sorted_arrays_in_place(a: List[int], b: List[int]) -> None:
     Time:  O((n + m) * log(n + m))
     Space: O(1)
     """
-    n, m = len(a), len(b)
+    n, m = len(list_a), len(list_b)
 
     def get(idx: int) -> int:
-        return a[idx] if idx < n else b[idx - n]
+        return list_a[idx] if idx < n else list_b[idx - n]
 
     def set_val(idx: int, value: int) -> None:
         if idx < n:
-            a[idx] = value
+            list_a[idx] = value
         else:
-            b[idx - n] = value
+            list_b[idx - n] = value
 
     gap = n + m
 
