@@ -100,15 +100,13 @@ def find_longest_unique_substring(s: str) -> str:
     for i, char in enumerate(s):
         if char in last_seen and last_seen[char] >= start:
             # Character is repeated within the current window
-            start = (
-                last_seen[char] + 1
-            )  # Move start to one position after the last occurrence
+            start = last_seen[char] + 1 # Move start to one position after the last occurrence
 
         last_seen[char] = i  # Update the last seen index of the character
 
         current_length = i - start + 1  # Calculate current substring length
         if current_length > max_length:
             max_length = current_length
-            longest_substring = s[start : i + 1]  # Update longest substring
+            longest_substring = s[start : i + 1]  # Update the longest substring
 
     return longest_substring
