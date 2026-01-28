@@ -99,8 +99,7 @@ def find_duplicates(work_orders: list[int]) -> list[int]:
     """
     duplicates = set()  # Use set to store unique duplicates only
 
-    for i in range(len(work_orders)):
-        value = work_orders[i]
+    for value in work_orders:
         index = abs(value) - 1  # Get index corresponding to the absolute value
 
         # Handle edge case: out-of-range values (e.g., value > n or value < 1)
