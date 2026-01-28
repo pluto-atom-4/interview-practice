@@ -13,6 +13,20 @@ This approach leverages the constraint that values are in range 1..n. Each value
 to mark locations in the same array, eliminating the need for extra space. When we encounter a value for
 the second time, the location it maps to is already marked, revealing a duplicate.
 
+Before diving into the implementation, here's what I need to know to avoid pitfalls:
+
+* **Values in Range 1..n:** My work order IDs must fall within [1, n], where n is the array length.
+  This is crucial because it lets every value map to a valid array index using the formula `abs(value) - 1`.
+  Without this constraint, I'll get index errors.
+* **Duplicates Exist:** At least one duplicate must be present in my data.
+  Thanks to the Pigeonhole Principle, if I have n elements with values in range 1..n, a duplicate is guaranteed—no exceptions.
+* **Input Array Mutability:** Fair warning: this solution modifies my input array in-place by negating values.
+  If I can't accept that the original array gets altered, this technique won't work for me.
+* **No Additional Data Structures:** I can only use the input array itself for marking.
+  No hash sets, dictionaries, or auxiliary arrays allowed—they'd break the O(1) space constraint I'm aiming for.
+* **Handling Edge Cases:** Out-of-range values (anything less than 1 or greater than n) should be skipped
+  to prevent index errors and keep my results clean. Invalid input shouldn't corrupt my algorithm.
+
 * Key Concepts:
 
   - Why use `abs(value) - 1` to convert values to indices?
