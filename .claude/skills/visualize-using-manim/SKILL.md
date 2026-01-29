@@ -410,7 +410,367 @@ if __name__ == "__main__":
 
 ---
 
-## Common Pitfalls to Avoid
+## Text Rendering & Cleanup Guide
+
+### Critical: Managing Dynamic Text
+
+When displaying text that changes frequently (like state variables, counters, or labels), improper cleanup can cause:
+- Text overlapping on screen (multiple versions visible simultaneously)
+- Performance degradation (too many objects accumulating)
+- Visual clutter obscuring the actual animation
+
+### Proper Text Lifecycle
+
+**❌ WRONG: Text accumulates**
+```python
+for step in range(5):
+    status_text = Text(f"Step {step}")
+    self.play(Write(status_text))
+    self.wait(1)
+    # Text is still on screen!
+```
+
+**✅ CORRECT: Text is replaced**
+```python
+status_text = None
+
+for step in range(5):
+    # Remove previous text before creating new one
+    if status_text is not None:
+        self.play(Uncreate(status_text))
+    
+    status_text = Text(f"Step {step}")
+    self.play(Write(status_text))
+    self.wait(1)
+```
+
+### Text Cleanup Patterns
+
+#### Pattern 1: Replace with New Text
+```python
+# Store reference to updatable text
+status = Text("Initial", font_size=14)
+status.move_to(ORIGIN + DOWN * 2.0)
+self.play(Write(status))
+
+for i in range(3):
+    # Remove old, add new
+    self.play(Uncreate(status))
+    status = Text(f"Step {i}", font_size=14)
+    status.move_to(ORIGIN + DOWN * 2.0)
+    self.play(Write(status))
+    self.wait(0.5)
+```
+
+#### Pattern 2: Fade Out Before New Content
+```python
+status_text = Text("Loading...", font_size=14)
+status_text.move_to(ORIGIN)
+self.play(Write(status_text))
+self.wait(1)
+
+# Fade out instead of Uncreate for smooth transition
+self.play(FadeOut(status_text))
+
+new_text = Text("Complete!", font_size=14)
+new_text.move_to(ORIGIN)
+self.play(Write(new_text))
+```
+
+#### Pattern 3: Keep Persistent vs. Temporary Separation
+```python
+# Persistent elements (keep on screen)
+persistent = VGroup()
+title = Text("Algorithm Demo", font_size=20)
+persistent.add(title)
+self.play(Create(persistent))
+
+# Temporary elements (clean up after use)
+temp_text = None
+
+for step in range(3):
+    # Clean up previous temp text
+    if temp_text is not None:
+        self.play(Uncreate(temp_text))
+    
+    # Create new temp text
+    temp_text = Text(f"Step {step}: Processing", font_size=12)
+    temp_text.next_to(title, DOWN, buff=0.5)
+    self.play(Write(temp_text))
+    self.wait(1)
+
+# Final cleanup
+self.play(Uncreate(temp_text))
+```
+
+### State Display Management
+
+**Problem:** Displaying multiple state variables that update each iteration
+
+**Solution:** Update all state text in one atomic operation
+
+```python
+# Setup initial state display (left panel)
+state_labels = VGroup()
+prev_label = Text("prev:", font_size=12, color=BLUE)
+curr_label = Text("curr:", font_size=12, color=RED)
+nxt_label = Text("nxt:", font_size=12, color=GREEN)
+
+# Position and group
+prev_label.move_to(LEFT * 3.5 + UP * 0.5)
+curr_label.move_to(LEFT * 3.5)
+nxt_label.move_to(LEFT * 3.5 + DOWN * 0.5)
+
+state_labels.add(prev_label, curr_label, nxt_label)
+self.play(Create(state_labels))
+
+# For each iteration: remove old values, show new ones
+state_values = None  # Track the value text group
+
+for i in range(3):
+    # Remove previous state values
+    if state_values is not None:
+        self.play(Uncreate(state_values))
+    
+    # Create new state values
+    state_values = VGroup()
+    prev_val = Text(f"Node{i-1}" if i > 0 else "None", font_size=10, color=BLUE)
+    curr_val = Text(f"Node{i}", font_size=10, color=RED)
+    nxt_val = Text(f"Node{i+1}" if i < 2 else "None", font_size=10, color=GREEN)
+    
+    prev_val.next_to(prev_label, RIGHT, buff=0.3)
+    curr_val.next_to(curr_label, RIGHT, buff=0.3)
+    nxt_val.next_to(nxt_label, RIGHT, buff=0.3)
+    
+    state_values.add(prev_val, curr_val, nxt_val)
+    self.play(Write(state_values))
+    self.wait(1)
+
+# Final cleanup
+if state_values is not None:
+    self.play(Uncreate(state_values))
+```
+
+### Best Practices for Text
+
+| ✅ DO | ❌ DON'T |
+|------|---------|
+| Create/Uncreate text in pairs | Leave temporary text on screen |
+| Group related text for batch operations | Update individual pieces of text separately |
+| Store references for cleanup | Lose track of what text is displayed |
+| Use FadeOut for smooth transitions | Instantly remove text without animation |
+| Clear state between iterations | Accumulate text from multiple loops |
+| Position text before displaying | Move text after it's on screen |
+| Keep text within canvas bounds | Let text extend beyond visible area |
+
+### Performance Optimization
+
+```python
+# BEFORE: Inefficient (accumulates 100 text objects)
+for i in range(100):
+    text = Text(f"Value: {i}")
+    text.move_to(ORIGIN)
+    self.play(Write(text))
+    self.wait(0.1)
+    # Text not removed = 100 objects in memory!
+
+# AFTER: Efficient (keeps only 1 text object)
+current_text = None
+for i in range(100):
+    if current_text is not None:
+        self.play(Uncreate(current_text), run_time=0.05)
+    
+    current_text = Text(f"Value: {i}")
+    current_text.move_to(ORIGIN)
+    self.play(Write(current_text), run_time=0.05)
+    self.wait(0.05)
+
+# Clean up
+if current_text is not None:
+    self.play(Uncreate(current_text))
+```
+
+### Debugging Text Issues
+
+If text appears to overlap or accumulate:
+
+1. **Check for missing Uncreate/FadeOut calls** before creating new text
+2. **Verify loop cleanup** – ensure final cleanup happens after loops
+3. **Track text references** – use variable names like `temp_text` to remind yourself it needs cleanup
+4. **Use print statements** to debug how many objects you're creating
+5. **Test with small iterations first** before running full animation
+
+---
+
+
+
+### Critical: Understanding the Manim Canvas
+
+Manim renders to a 2D canvas with default dimensions of 8 units wide × 4.5 units tall (in standard quality). Elements positioned outside these bounds will not render or will be clipped.
+
+### Default Canvas Bounds
+- **Horizontal:** -4 to +4 (LEFT to RIGHT)
+- **Vertical:** -2.25 to +2.25 (DOWN to UP)
+- **Total safe area:** 8 units wide × 4.5 units tall
+
+### Safe Positioning Strategy
+
+**1. Divide the Canvas into Logical Regions**
+
+```
+┌─────────────────────────────────────┐
+│         TITLE/HEADER (UP)           │  y ≈ +2.0
+├──────┬───────────────┬──────────────┤
+│LEFT  │    CENTER     │    RIGHT     │
+│PANEL │    CONTENT    │    PANEL     │
+│-3.5  │   -2 to +2    │    +3.5      │  y ≈ +0.5 to -0.5
+├──────┼───────────────┼──────────────┤
+│      │  WORKING AREA │              │
+│      │ (animations)  │              │  y ≈ -1.0 to -2.0
+├──────┴───────────────┴──────────────┤
+│      FOOTER/STATUS (DOWN)           │  y ≈ -2.2
+└─────────────────────────────────────┘
+```
+
+**2. Absolute Position Calculation**
+
+Never hardcode positions without accounting for canvas bounds:
+
+```python
+# ❌ WRONG: Can go out of bounds
+element.move_to(RIGHT * 5 + DOWN * 3)  # Renders outside canvas
+
+# ✅ CORRECT: Constrained to safe area
+element.move_to(RIGHT * 3.5 + DOWN * 2)  # Within bounds
+```
+
+**3. Safe Offset System**
+
+Define clear offsets and validate they stay within bounds:
+
+```python
+# Define boundaries
+CANVAS_LEFT = -3.8
+CANVAS_RIGHT = 3.8
+CANVAS_TOP = 2.2
+CANVAS_BOTTOM = -2.2
+CENTER_X = 0
+CENTER_Y = 0
+
+# Position title (top center)
+title = Text("Title")
+title.move_to(ORIGIN + UP * 2.0)  # y = 2.0 ✓ Within +2.2
+
+# Position left panel
+left_label = Text("Left")
+left_label.move_to(ORIGIN + RIGHT * CANVAS_LEFT + UP * 1.0)  # x = -3.8 ✓
+
+# Position content area (centered horizontally, mid-screen vertically)
+content = VGroup()
+content.move_to(ORIGIN + DOWN * 0.5)  # y = -0.5 ✓
+```
+
+### Layout Patterns
+
+#### Pattern 1: Single Center Content
+```python
+# Single element in center
+element.move_to(ORIGIN)  # Perfectly centered
+
+# Multiple stacked elements
+title.move_to(ORIGIN + UP * 1.5)
+content.move_to(ORIGIN)
+footer.move_to(ORIGIN + DOWN * 1.8)
+```
+
+#### Pattern 2: Three-Column Layout
+```python
+# Left, Center, Right columns
+LEFT_X = -3.5
+CENTER_X = 0
+RIGHT_X = 3.5
+
+left_content.move_to(RIGHT * LEFT_X)
+center_content.move_to(RIGHT * CENTER_X)
+right_content.move_to(RIGHT * RIGHT_X)
+```
+
+#### Pattern 3: Grid Layout
+```python
+# NxM grid with proper spacing
+spacing_x = 2.0  # Horizontal gap
+spacing_y = 1.5  # Vertical gap
+
+for row in range(rows):
+    for col in range(cols):
+        # Calculate position ensuring bounds: -3.8 to +3.8 horizontally
+        x = CENTER_X + (col - cols/2) * spacing_x
+        y = CENTER_Y - (row - rows/2) * spacing_y
+        
+        # Validate bounds before positioning
+        if -3.8 <= x <= 3.8 and -2.2 <= y <= 2.2:
+            element.move_to(RIGHT * x + DOWN * y)
+```
+
+### Common Position Pitfalls
+
+| ❌ Problem | ✅ Solution |
+|-----------|-----------|
+| Large negative LEFT offset | Use `to_edge(LEFT)` instead; or keep offset > -3.8 |
+| Large positive RIGHT offset | Use `to_edge(RIGHT)` instead; or keep offset < 3.8 |
+| Elements stacked at same y | Use `next_to(element, DOWN, buff=0.3)` for automatic spacing |
+| Overlapping elements | Calculate precise spacing; validate positions don't overlap |
+| Text extends beyond edges | Use `max_width` parameter: `Text("...", max_width=3.0)` |
+| Arrows point off-canvas | Ensure both start/end positions are within bounds |
+
+### Validation Checklist
+
+Before rendering, verify:
+
+- [ ] **Title position:** y ≤ 2.2 (not clipped by top)
+- [ ] **Content position:** -2.2 ≤ y ≤ 2.0 (centered vertically)
+- [ ] **Footer position:** y ≥ -2.2 (not clipped by bottom)
+- [ ] **Left elements:** x ≥ -3.8 (not clipped by left edge)
+- [ ] **Right elements:** x ≤ 3.8 (not clipped by right edge)
+- [ ] **All arrows:** Both start AND end points within bounds
+- [ ] **All text:** Doesn't exceed max_width or extend beyond positioned container
+- [ ] **VGroups:** All sub-elements positioned before grouping
+- [ ] **Animated elements:** Path stays within bounds during animation
+- [ ] **Temporary elements:** Removed with FadeOut before accumulating too many
+
+### Safe Sizing Recommendations
+
+**Font sizes (relative to content):**
+- Title: 24-28pt (takes ~1.5 units width for 20-char text)
+- Content: 14-18pt (takes ~0.8 units width for 20-char text)
+- Labels: 11-14pt (takes ~0.6 units width for 20-char text)
+
+**Shape sizing:**
+- Circles/boxes: radius/width ≤ 0.4 (prevents overlap in grids)
+- Spacing between elements: ≥ 0.3 units (visual clarity)
+- Arrow buffers: ≥ 0.05 units (prevents ugly overlaps)
+
+### Testing Your Layout
+
+Before finalizing:
+
+```python
+# Visualize safe area boundaries (development only)
+from manim import Line
+
+def add_boundary_lines(self):
+    """Add guides to visualize canvas bounds."""
+    h_line = Line(LEFT * 3.8 + ORIGIN, RIGHT * 3.8 + ORIGIN, color=GRAY)
+    v_line = Line(UP * 2.2 + ORIGIN, DOWN * 2.2 + ORIGIN, color=GRAY)
+    self.play(Create(h_line), Create(v_line))
+    
+# Use in construct():
+# self.add_boundary_lines()
+```
+
+---
+
+    
 
 ❌ **Too fast animations:** Viewers can't follow the logic
 → ✅ Add `self.wait()` between major steps; use slower animations for important transitions
