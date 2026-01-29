@@ -15,10 +15,10 @@ without storing all elements in memory.
 
 * Key Concepts:
 
-  - Why use Counter to build frequency map?
-Counting frequencies is essential preprocessing. Counter is a built-in, optimized way to build
-a hash map of element → count in O(n) time. This gives us the "frequency ranking" needed 
-to identify top-k candidates.
+  - Why build frequency map manually?
+Building a frequency map is essential preprocessing. By iterating through the list and
+incrementally counting occurrences, we achieve O(n) time complexity without external dependencies.
+This gives us the "frequency ranking" needed to identify top-k candidates.
 
   - Why min-heap of size k instead of sorting all frequencies?
 Sorting all n distinct elements would cost O(n log n). A fixed-size min-heap maintains O(k) space 
@@ -89,7 +89,10 @@ def top_k_frequent(nums: List[Any], k: int) -> List[Any]:
     if k <= 0:
         return []
 
-    freq = Counter(nums)
+    # Build frequency map manually without Counter
+    freq: dict[Any, int] = {}
+    for num in nums:
+        freq[num] = freq.get(num, 0) + 1
 
     # Min-heap of (frequency, value)
     heap: List[tuple[int, Any]] = []
