@@ -1,3 +1,50 @@
+"""
+COUNT ISLANDS - SIMPLIFIED FLOWCHART
+
+                          START
+                            │
+                            ▼
+                  ┌───────────────────┐
+                  │ Grid empty?       │─ YES ─► RETURN 0
+                  └─────────┬─────────┘
+                           NO
+                            │
+                            ▼
+                    Initialize visited[][]
+                    islands = 0
+                            │
+                            ▼
+                  ┌──────────────────────┐
+                  │ FOR each cell (r,c)  │
+                  │ in grid              │
+                  └────────┬─────────────┘
+                           │
+                           ▼
+                  ┌──────────────────────┐
+                  │ Is cell land (1) AND │
+                  │ unvisited?           │─ No ─► Next cell
+                  └─────────┬────────────┘
+                           YES
+                            │
+                            ▼
+                      BFS(r, c)
+                            │
+                            ▼
+                      Mark visited & explore all 4-neighbors
+                            │
+                            ▼
+                      islands += 1
+                            │
+                            ▼
+                    ┌─────────────────┐
+                    │ All cells done? │─ YES ─► RETURN islands
+                    └───────┬─────────┘
+                           NO
+                            │ Return
+                            ▼ to loop
+                        (next cell)
+"""
+
 import pytest
 
 from drills.count_islands import count_islands
