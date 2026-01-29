@@ -39,6 +39,15 @@ Prevents duplicate processing and out-of-bounds errors. Marking as visited immed
 2. Iterate through every cell in the grid
 3. When finding an unvisited land cell (value 1), initiate BFS from that cell
 4. In BFS: explore all 4 neighbors, marking unvisited land neighbors as visited and enqueueing them
+   - **Compute neighbor coordinates (nr, nc):**
+     - `nr = r + dr` and `nc = c + dc` transform direction offsets into actual grid positions
+     - Offsets `(1,0), (-1,0), (0,1), (0,-1)` represent down, up, right, left
+     - Computing new coordinates allows systematic exploration of all adjacent cells
+   - **Validate neighbor before enqueueing:**
+     - `0 <= nr < rows and 0 <= nc < cols`: Ensure neighbor is within grid bounds (prevents IndexError)
+     - `not visited[nr][nc]`: Skip already-visited cells to avoid duplicate processing and infinite loops
+     - `grid[nr][nc] == 1`: Only enqueue land cells; water cells (0) don't extend the island
+     - **Combined effect:** Only valid, unprocessed land neighbors are added to queue for exploration
 5. After BFS completes, increment island counter and continue scanning
 6. Return total island count
 
