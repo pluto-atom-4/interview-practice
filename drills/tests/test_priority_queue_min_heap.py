@@ -5,7 +5,7 @@ This module uses the unittest framework to validate the functionality of the Pri
 """
 
 
-from drills.primary_queue import PriorityQueue, Task
+from drills.priority_queue_min_heap import PriorityQueue, Task
 
 
 class TestPriorityQueue:
