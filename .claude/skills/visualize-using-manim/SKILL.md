@@ -301,6 +301,368 @@ element.move_to(ORIGIN + RIGHT*3 + DOWN*2)
 
 ---
 
+## Animating Elements from Left to Right
+
+### Core Pattern: Computing Text Positions
+
+When displaying a sequence of elements (characters, tokens, array elements), position them clearly from left to right using a **linear positioning formula**:
+
+```python
+# Define positioning parameters
+start_x = -2.0          # Starting x position (left side)
+element_width = 0.5     # Spacing between elements
+element_height = 0.4    # Height of each element box
+
+# Position each element from left to right
+for i, element in enumerate(elements):
+    # Compute position: start_x + index * spacing
+    pos_x = start_x + i * element_width
+    pos_y = 0.5  # Fixed y position (or adjust per row)
+    
+    # Apply position using RIGHT (positive x-offset for rightward movement)
+    element.move_to(ORIGIN + RIGHT * pos_x + UP * pos_y)
+```
+
+### Why This Pattern?
+
+| Aspect | Benefit |
+|--------|---------|
+| **Linear formula** | Easy to understand progression; predictable spacing |
+| **Named variables** | `start_x`, `element_width` are self-documenting |
+| **RIGHT direction** | Positive offsets intuitive for rightward movement |
+| **Index-based** | O(1) computation per element; scales efficiently |
+
+### Complete Example: Character Sequence Display
+
+```python
+class CharacterSequenceVisualization(Scene):
+    def construct(self):
+        input_string = "abacabad"
+        
+        # === Position setup ===
+        char_width = 0.5
+        start_x = -2.0
+        char_box_y = 0.5
+        
+        # === Create and position character boxes ===
+        char_boxes = {}
+        string_display = VGroup()
+        
+        for i, ch in enumerate(input_string):
+            # Create box and text
+            box = Rectangle(width=0.4, height=0.4, color=BLUE)
+            char_text = Text(ch, font_size=12)
+            
+            # Compute position: linear progression from left to right
+            pos_x = start_x + i * char_width
+            box.move_to(ORIGIN + RIGHT * pos_x + UP * char_box_y)
+            char_text.move_to(box.get_center())
+            
+            # Store and group
+            string_display.add(box, char_text)
+            char_boxes[i] = (box, char_text)
+        
+        # Animate: Display all at once or sequence from left to right
+        self.play(Create(string_display))
+        self.wait(0.5)
+```
+
+### Animation Direction: Left-to-Right Sequencing
+
+For interactive algorithms that process elements sequentially, animate from left to right:
+
+```python
+# === Option 1: Animate all elements immediately ===
+self.play(Create(string_display))  # All visible at once
+
+# === Option 2: Sequence animations left to right ===
+for i in range(len(input_string)):
+    self.play(Indicate(char_boxes[i][0], color=RED, scale_factor=1.3))
+    self.wait(0.2)
+
+# === Option 3: Create with staggered animation ===
+animations = []
+for i, (box, text) in char_boxes.items():
+    # Create animation objects (not played yet)
+    animations.append(Create(box))
+    animations.append(Write(text))
+
+# Play all animations with slight stagger
+self.play(*animations, lag_ratio=0.1)  # 0.1 = 10% stagger between elements
+```
+
+### Positioning Grid: Rows and Columns
+
+For 2D displays (like frequency tables below character sequences):
+
+```python
+# Character boxes: single row, multiple columns
+char_width = 0.5
+char_start_x = -2.0
+char_y = 0.5
+
+for i, ch in enumerate(input_string):
+    pos_x = char_start_x + i * char_width
+    # All characters in same row
+    box.move_to(ORIGIN + RIGHT * pos_x + UP * char_y)
+
+# Frequency table: left-aligned, stacked vertically below characters
+freq_start_x = -2.0      # Align with char start
+freq_start_y = -1.0      # Below characters
+freq_row_height = 0.3
+
+for idx, (ch, freq) in enumerate(freq_counter.items()):
+    pos_x = freq_start_x
+    pos_y = freq_start_y - idx * freq_row_height
+    freq_text.move_to(ORIGIN + RIGHT * pos_x + DOWN * pos_y)
+```
+
+### Computing Offset for Centered Alignment
+
+If you need to **center a group of elements** (e.g., center character sequence on screen):
+
+```python
+# Given: N elements with total width
+num_elements = 8
+element_width = 0.5
+total_width = (num_elements - 1) * element_width
+
+# Compute start_x to center the sequence
+center_x = 0  # Center of screen
+start_x = center_x - (total_width / 2)  # Shifts to center
+
+for i in range(num_elements):
+    pos_x = start_x + i * element_width
+    element.move_to(ORIGIN + RIGHT * pos_x + UP * 0.5)
+```
+
+### Best Practices: Left-to-Right Animation
+
+| ✅ DO | ❌ DON'T |
+|------|---------|
+| Use linear formula: `pos_x = start + i * width` | Hardcode individual positions |
+| Store `start_x`, `element_width` as variables | Embed magic numbers in loops |
+| Use `RIGHT * pos_x` for positive offsets | Use `LEFT * negative_value` (confusing) |
+| Validate positions stay within bounds | Position elements off-canvas |
+| Center sequences using symmetrical offsets | Assume elements fit without checking |
+| Animate sequentially with `lag_ratio` | Create all animations without timing |
+| Document positioning strategy in comments | Leave positioning logic unexplained |
+| Test with different string lengths | Hardcode for single test case |
+
+### Common Pitfalls and Fixes
+
+| ❌ Problem | ✅ Solution |
+|-----------|-----------|
+| Elements overlap | Increase `element_width` or decrease font size |
+| Elements extend off-screen | Reduce `element_width` or use centered formula |
+| Inconsistent spacing | Use `pos_x = start_x + i * element_width` consistently |
+| Animation feels jerky | Use `lag_ratio=0.1-0.2` for smooth stagger |
+| Hard to adjust layout | Store positioning in variables; change once at top |
+| Text not centered in box | Use `text.move_to(box.get_center())` after box positioning |
+| Multiple rows misaligned | Use same `element_width` for all rows |
+
+---
+
+## Computing Summary Position: Vertical Stacking
+
+### Pattern: Positioning Multiple Sequential Messages
+
+When displaying multiple text messages vertically (e.g., search result → summary → complexity info), precise positioning prevents overlapping and creates visual hierarchy.
+
+### Core Formula: Consistent Vertical Spacing
+
+```python
+# Define vertical positions for stacked messages
+base_y = 2.0                    # Starting y position (top)
+message_spacing = 0.4           # Gap between messages
+
+# Position messages with consistent spacing
+result_y = base_y
+summary_y = base_y + message_spacing
+complexity_y = base_y + (message_spacing * 2)
+
+# Apply positions
+result_text.move_to(ORIGIN + DOWN * result_y)
+summary_text.move_to(ORIGIN + DOWN * summary_y)
+complexity_text.move_to(ORIGIN + DOWN * complexity_y)
+```
+
+### Real-World Example: Rotated Binary Search
+
+```python
+# Scenario: Three text elements to display at end of animation
+# 1. Match result (shown when target found)
+# 2. Summary (iterations count)
+# 3. Complexity (time/space analysis)
+
+# === Position Calculation ===
+match_text_y = 2.0          # First message (top)
+summary_y = 2.2             # Second message (0.2 units below match)
+complexity_y = 2.6          # Third message (0.4 units below summary)
+
+# Vertical spacing hierarchy:
+# match_text:   y = -2.0 (top)
+#   ↓ (0.2 gap)
+# summary:      y = -2.2 (middle)
+#   ↓ (0.4 gap, larger for emphasis)
+# complexity:   y = -2.6 (bottom)
+
+# === Implementation ===
+if nums[mid] == target:
+    match_text = Text(f"Found! nums[{mid}] = {target}", font_size=14, color=RED)
+    match_text.move_to(ORIGIN + DOWN * 2.0)  # Top position
+    self.play(Write(match_text))
+    # [animation continues...]
+    break
+
+# After search loop completes:
+summary = Text(f"Search completed in {iteration} iterations", font_size=14, color=GREEN)
+summary.move_to(ORIGIN + DOWN * 2.2)  # Middle position (0.2 below match)
+self.play(Write(summary))
+
+complexity = Text("Time: O(log n)  Space: O(1)", font_size=12, color=GRAY)
+complexity.move_to(ORIGIN + DOWN * 2.6)  # Bottom position (0.4 below summary)
+self.play(Write(complexity))
+```
+
+### Position Computation Algorithm
+
+**Step 1: Identify reference points**
+```python
+# If you have a known reference element:
+reference_element_y = 2.0  # e.g., match_text position
+
+# If stacking from screen bottom:
+canvas_bottom = -2.2
+available_height = 0.6  # Space for 2-3 messages
+```
+
+**Step 2: Calculate spacing**
+```python
+# Define number of messages and available space
+num_messages = 3
+total_gap_needed = 0.2 + 0.4  # e.g., 0.2 + 0.4 = 0.6 units
+
+# Option A: Fixed gaps (most common)
+gap_small = 0.2  # Between related messages (match → summary)
+gap_large = 0.4  # For emphasis/separation (summary → complexity)
+
+# Option B: Proportional gaps (auto-calculate)
+total_available_height = 0.8  # Vertical space available
+auto_gap = total_available_height / (num_messages - 1)  # ~0.4 per gap
+```
+
+**Step 3: Assign positions**
+```python
+message_y_values = {
+    "match": 2.0,                           # Base position
+    "summary": 2.0 + 0.2,                  # Base + small gap
+    "complexity": 2.0 + 0.2 + 0.4,         # Base + small gap + large gap
+}
+
+# Or use loop for N messages:
+positions = []
+current_y = 2.0
+gaps = [0.2, 0.4]  # Gap before each subsequent message
+
+for i, gap in enumerate(gaps):
+    current_y += gap
+    positions.append(current_y)
+# Result: [2.2, 2.6]
+```
+
+**Step 4: Validate within canvas bounds**
+```python
+canvas_bottom = -2.2
+canvas_top = 2.2
+
+for message_y in [2.0, 2.2, 2.6]:
+    if canvas_bottom <= message_y <= canvas_top:
+        print(f"✓ Position {message_y} is within bounds")
+    else:
+        print(f"✗ Position {message_y} is OUT OF BOUNDS - ADJUST!")
+        # Recalculate with different spacing or base_y
+```
+
+### Best Practices: Summary Position Computation
+
+| ✅ DO | ❌ DON'T |
+|------|---------|
+| Use consistent gaps for visual hierarchy | Hardcode arbitrary y values |
+| Define gaps as variables (gap_small, gap_large) | Mix different gap strategies |
+| Validate positions within canvas bounds | Assume elements fit without checking |
+| Account for different font sizes (larger text needs more space) | Ignore text height when spacing |
+| Document positioning strategy in comments | Leave calculations unexplained |
+| Test with boundary cases (3 vs 1 message) | Hardcode for single scenario |
+| Use DOWN for positive gaps (intuitive) | Use confusing UP/LEFT/RIGHT combinations |
+| Group related messages with smaller gaps | Treat all messages equally |
+| Separate different categories with larger gaps | Use uniform spacing everywhere |
+
+### Common Positioning Scenarios
+
+#### Scenario 1: Result + Summary + Complexity (3 messages)
+```python
+# Most common: Show result, then summary, then technical info
+base_y = 2.0
+positions = {
+    "result": base_y + 0.0,      # y = 2.0
+    "summary": base_y + 0.2,     # y = 2.2  (0.2 gap)
+    "complexity": base_y + 0.6,  # y = 2.6  (0.4 gap)
+}
+```
+
+#### Scenario 2: Multiple Results (2 messages, no complexity)
+```python
+# Simplified: Just result and summary
+base_y = 2.0
+positions = {
+    "result": base_y + 0.0,      # y = 2.0
+    "summary": base_y + 0.3,     # y = 2.3  (0.3 gap)
+}
+```
+
+#### Scenario 3: Centered Stack (3 messages, centered vertically)
+```python
+# Center the entire stack on screen
+message_height_total = 0.2 + 0.4  # Total vertical extent
+canvas_center_y = 0.0
+base_y = canvas_center_y + (message_height_total / 2)
+
+positions = {
+    "result": base_y + 0.0,
+    "summary": base_y + 0.2,
+    "complexity": base_y + 0.6,
+}
+```
+
+### Debugging Overlapping Text
+
+If text appears to overlap:
+
+1. **Check current positions:**
+   ```python
+   print(f"match_y: {match_text.get_y()}")      # Actual position
+   print(f"summary_y: {summary_text.get_y()}")
+   print(f"complexity_y: {complexity_text.get_y()}")
+   ```
+
+2. **Verify gaps are sufficient:**
+   ```python
+   gap = abs(summary_text.get_y() - match_text.get_y())
+   print(f"Gap between match and summary: {gap}")
+   if gap < 0.2:
+       print("⚠ Gap too small - increase gap or reduce font size")
+   ```
+
+3. **Adjust and re-test:**
+   ```python
+   # Increase gaps if overlapping
+   summary.move_to(ORIGIN + DOWN * 2.3)  # Was 2.2, now 2.3
+   complexity.move_to(ORIGIN + DOWN * 2.7)  # Was 2.6, now 2.7
+   ```
+
+---
+
 ## Quality Checklist
 
 Before finalizing a visualization, verify:
@@ -621,9 +983,8 @@ Manim renders to a 2D canvas with default dimensions of 8 units wide × 4.5 unit
 ┌─────────────────────────────────────┐
 │         TITLE/HEADER (UP)           │  y ≈ +2.0
 ├──────┬───────────────┬──────────────┤
-│LEFT  │    CENTER     │    RIGHT     │
+│LEFT  │    CENTER     │    RIGHT     │  y ≈ +0.5 to -0.5
 │PANEL │    CONTENT    │    PANEL     │
-│-3.5  │   -2 to +2    │    +3.5      │  y ≈ +0.5 to -0.5
 ├──────┼───────────────┼──────────────┤
 │      │  WORKING AREA │              │
 │      │ (animations)  │              │  y ≈ -1.0 to -2.0
@@ -789,8 +1150,6 @@ def add_boundary_lines(self):
 
 ❌ **Arbitrary positioning:** Elements scattered randomly
 → ✅ Use consistent spacing; align elements in grids or rows
-
----
 
 ## Tags
 
