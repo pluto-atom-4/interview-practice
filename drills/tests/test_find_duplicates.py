@@ -1,4 +1,24 @@
+"""
+FUNCTION find_duplicates(work_orders):
+    CREATE an empty set named duplicates
 
+    FOR EACH value IN work_orders:
+        SET index = absolute_value(value) - 1
+
+        IF index is outside the range of work_orders:
+            CONTINUE to next iteration
+
+        IF work_orders[index] is negative:
+            ADD absolute_value(value) to duplicates set
+        ELSE:
+            MULTIPLY work_orders[index] by -1 (mark as seen)
+
+    RETURN duplicates set converted to a sorted list
+
+The Function assumes that work_orders contains positive integers in the range 1 to n,
+where n is the length of the list.
+
+"""
 import pytest
 
 from drills.find_duplicates import find_duplicates
