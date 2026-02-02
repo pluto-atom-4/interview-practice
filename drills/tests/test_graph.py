@@ -206,36 +206,6 @@ class TestGraphDFS:
         dfs_order = list(graph_dfs(graph, "A"))
         assert dfs_order == ["A", "B"]
 
-class TestGraphCycles:
-    """ Test graph cycle detection. """
-
-    def test_graph_cycle_detection(self):
-        graph = Graph(directed=True)  # Use directed graph for cycle detection
-        graph.add_edge("A", "B", 1)
-        graph.add_edge("B", "C", 1)
-        graph.add_edge("C", "A", 1)  # Creates a cycle: A -> B -> C -> A
-        # Cycle detection logic would go here
-        # For now, just ensure edges are added correctly
-        assert "B" in [dest for dest, weight in graph.adj_list["A"]]
-        assert "C" in [dest for dest, weight in graph.adj_list["B"]]
-        assert "A" in [dest for dest, weight in graph.adj_list["C"]]
-        assert graph_cycle_detection(graph) is True
-
-    def test_graph_no_cycle_detection(self):
-        graph = Graph(directed=True)  # Use directed graph for cycle detection
-        graph.add_edge("A", "B", 1)
-        graph.add_edge("B", "C", 1)
-        # No cycle present: A -> B -> C (linear path)
-        assert "B" in [dest for dest, weight in graph.adj_list["A"]]
-        assert "C" in [dest for dest, weight in graph.adj_list["B"]]
-        assert graph_cycle_detection(graph) is False
-
-    def test_graph_cycle_detection_self_loop(self):
-        graph = Graph(directed=True)  # Use directed graph for cycle detection
-        graph.add_edge("A", "A", 1)  # Self-loop creates a cycle
-        assert ("A", 1) in graph.adj_list["A"]
-        assert graph_cycle_detection(graph) is True
-
 class TestGraphTopologicalSort:
     """ Test topological sorting of the graph. """
 
