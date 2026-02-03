@@ -1,3 +1,51 @@
+"""
+CLASS MaxHeapPriorityQueue:
+    CONSTRUCTOR:
+        INITIALIZE heap as an empty list
+
+    FUNCTION insert(task, priority):
+        APPEND (priority, task) to heap
+        heapify_up(last_index)
+
+    FUNCTION heapify_up(index):
+        WHILE index > 0:
+            parent = (index - 1) / 2
+            IF heap[index].priority > heap[parent].priority:
+                SWAP heap[index] and heap[parent]
+                index = parent
+            ELSE:
+                BREAK
+
+    FUNCTION extract_max():
+        IF heap is empty: RETURN None
+        
+        SWAP heap[0] and heap[last_index]
+        max_item = REMOVE last element from heap
+        heapify_down(0)
+        RETURN max_item
+
+    FUNCTION heapify_down(index):
+        WHILE True:
+            left = 2 * index + 1
+            right = 2 * index + 2
+            largest = index
+
+            IF left < heap_size AND heap[left].priority > heap[largest].priority:
+                largest = left
+            IF right < heap_size AND heap[right].priority > heap[largest].priority:
+                largest = right
+
+            IF largest != index:
+                SWAP heap[index] and heap[largest]
+                index = largest
+            ELSE:
+                BREAK
+
+    FUNCTION peek():
+        RETURN heap[0] IF NOT empty ELSE None
+
+"""
+
 import pytest
 
 from drills.priority_queue import MaxHeapPriorityQueue
