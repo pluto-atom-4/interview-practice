@@ -44,6 +44,8 @@ locality. The binary structure ensures logarithmic depth, minimizing bubble-up/b
 4. **Peek:** Return root element (highest priority) without modification
 5. **Heapify-up:** From child position, compare with parent; swap and move up if child > parent, else stop
 6. **Heapify-down:** From parent position, compare with both children; swap with larger child and move down, else stop
+   - To avoid an infinite loop inHeapify-down, ensure that the loop only continues when a swap is needed (i.e., the current node is not the largest among itself and its children). The loop breaks when no swap occurs, meaning the max-heap property is restored. This is handled by the if largest != index: condition—if no child has a higher priority, largest == index and the loop exits.
+   - Also, always check child indices are within bounds (left < size, right < size) before accessing them. This prevents out-of-range errors that could cause unexpected behavior.
 
 * **30-Second Pitch**:
 
