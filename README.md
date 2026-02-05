@@ -40,21 +40,27 @@ This project uses [uv](https://github.com/astral-sh/uv) for fast, modern Python 
    ```
 2. **Create and activate a virtual environment**
    ```
-   python -m venv venv
-   venv\Scripts\activate  # Windows
+   # Remove old venv if present
+   rmdir /s /q venv  # Windows (run in PowerShell)
    # OR
-   source venv/bin/activate  # macOS/Linux
+   rm -rf venv       # macOS/Linux
+
+   # Create new .venv using uv
+   uv venv .venv
+   # Activate (Windows)
+   .venv\Scripts\Activate.ps1
+   # Activate (macOS/Linux)
+   source .venv/bin/activate
    ```
 3. **Install uv (if not already installed)**
    ```
-   # Recommended: install uv globally
    pip install uv
    # Or see https://github.com/astral-sh/uv for other install options
    ```
 4. **Install dependencies with uv**
    ```
    uv pip install .
-   # For dev dependencies (testing, formatting):
+   # For dev dependencies (testing, Jupyter, formatting):
    uv pip install .[dev]
    ```
 5. **Run tests**
@@ -63,6 +69,7 @@ This project uses [uv](https://github.com/astral-sh/uv) for fast, modern Python 
    ```
 
 > **Note:** `requirements.txt` is now deprecated. All dependencies are managed in `pyproject.toml`.
+> Jupyter and notebook tools are included as dev dependencies. Activate `.venv` before running notebooks or scripts.
 
 ## 🧹 Code Quality
 This project uses **Black** and **isort** for formatting. Pre-commit hooks are configured to run automatically before each commit.
