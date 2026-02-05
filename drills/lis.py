@@ -88,7 +88,6 @@ analysis (longest matching subsequences), and task scheduling (dependency chain 
 
 from __future__ import annotations
 
-from bisect import bisect_left
 from typing import List
 
 
@@ -99,14 +98,31 @@ def longest_increasing_subsequence(nums: List[int]) -> int:
 
     Example:
         [10, 9, 2, 5, 3, 7, 101, 18] → 4  (LIS = [2, 3, 7, 18])
+
+    Enhancement:
+        Uses a custom nested binary search function instead of bisect_left.
     """
     if not nums:
         return 0
 
     tails: List[int] = []
 
+    def bisect_left(arr: List[int], target: int) -> int:
+        """
+        Find the leftmost index to insert target in arr to maintain sorted order.
+        Equivalent to bisect_left(arr, target).
+        """
+        left, right = 0, len(arr)
+        while left < right:
+            mid = (left + right) // 2
+            if arr[mid] < target:
+                left = mid + 1
+            else:
+                right = mid
+        return left
+
     for num in nums:
-        # Find insertion point in tails
+        # Find insertion point in tails using custom binary search
         idx = bisect_left(tails, num)
 
         if idx == len(tails):
