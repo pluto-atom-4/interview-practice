@@ -4,6 +4,9 @@
 Implement breadth-first search (BFS) and depth-first search (DFS) graph traversals that yield nodes in visit order.
 The goal is to explore all reachable nodes from a starting vertex, enabling connectivity analysis and shortest-path 
 discovery. This tests understanding of queue/stack-based traversal and the yield keyword for generator-based iteration.
+BDF is used for level-order exploration. For hierarchical structures: Traverse assembly trees level-by-level for parallel processing checks."
+
+
 
 ## Whiteboard Coding Challenge Notes
 
