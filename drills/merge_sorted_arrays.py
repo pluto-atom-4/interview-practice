@@ -15,10 +15,16 @@ This ensures that large inversions are resolved early, leading to fewer swaps in
 * Key Concepts:
 
   - Why update the gap as `(gap + 1) // 2` and initialize it with `n + m`?
-The GAP method is inspired by the Shell Sort algorithm. The gap is initialized to the combined length of the two arrays (`n + m`) to ensure that elements far apart are compared and swapped first. This reduces large inversions early in the process. The gap is then reduced using `(gap + 1) // 2` to ensure it eventually reaches 1, allowing for a final pass that guarantees the arrays are fully sorted. The formula `(gap + 1) // 2` ensures that the gap decreases gradually and avoids getting stuck at zero.
+  The GAP method is inspired by the Shell Sort algorithm.
+  The gap is initialized to the combined length of the two arrays (`n + m`) to ensure that elements far apart are compared and swapped first.
+  This reduces large inversions early in the process.
+  The gap is then reduced using `(gap + 1) // 2` to ensure it eventually reaches 1, allowing for a final pass that guarantees the arrays are fully sorted.
+  The formula `(gap + 1) // 2` ensures that the gap decreases gradually and avoids getting stuck at zero.
 
   - Why implement the `get` and `set_val` functions?
-The `get` and `set_val` functions abstract the logic of accessing and modifying elements across two arrays (`a` and `b`). This abstraction is necessary because the two arrays are treated as a single logical sequence during the merge process. By using these helper functions, the code avoids repetitive and error-prone index calculations, improving readability and maintainability.
+  The `get` and `set_val` functions abstract the logic of accessing and modifying elements across two arrays (`a` and `b`).
+  This abstraction is necessary because the two arrays are treated as a single logical sequence during the merge process.
+  By using these helper functions, the code avoids repetitive and error-prone index calculations, improving readability and maintainability.
 
 * Logic:
 
@@ -29,7 +35,8 @@ The `get` and `set_val` functions abstract the logic of accessing and modifying 
 
 * **30-Second Pitch**:
 
-The GAP method merges two sorted arrays in place by iteratively reducing the gap between compared elements. This minimizes space complexity while maintaining efficient time complexity.
+The GAP method merges two sorted arrays in place by iteratively reducing the gap between compared elements.
+This minimizes space complexity while maintaining efficient time complexity.
 
 * **Rapid-Fire Version**:
 

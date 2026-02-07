@@ -1,3 +1,33 @@
+"""
+FUNCTION merge_sorted_arrays_in_place(list_a, list_b):
+    n = length of list_a
+    m = length of list_b
+    total_size = n + m
+
+    // Helper to treat list_a and list_b as one contiguous array
+    FUNCTION get_value(index):
+        IF index < n: RETURN list_a[index]
+        ELSE: RETURN list_b[index - n]
+
+    FUNCTION set_value(index, val):
+        IF index < n: list_a[index] = val
+        ELSE: list_b[index - n] = val
+
+    // Initialize gap
+    gap = total_size
+
+    WHILE gap > 1:
+        gap = (gap + 1) // 2  // Take the ceiling of gap / 2
+
+        FOR i FROM 0 TO (total_size - gap - 1):
+            j = i + gap
+
+            IF get_value(i) > get_value(j):
+                temp = get_value(i)
+                set_value(i, get_value(j))
+                set_value(j, temp)
+"""
+
 import pytest
 
 from drills.merge_sorted_arrays import merge_sorted_arrays_in_place
