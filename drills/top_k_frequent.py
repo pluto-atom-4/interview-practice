@@ -2,7 +2,7 @@
 ## Problem Statement
 
 Given an integer array and an integer k, return the k most frequent elements. 
-The goal is to efficiently identify and return the top-k elements with highest frequency.
+The goal is to efficiently identify and return the top-k elements with the highest frequency.
 This problem tests understanding of data structures (heap, hash map) and optimization techniques.
 
 ## Whiteboard Coding Challenge Notes
@@ -16,20 +16,19 @@ without storing all elements in memory.
 * Key Concepts:
 
   - Why build frequency map manually?
-Building a frequency map is essential preprocessing. By iterating through the list and
-incrementally counting occurrences, we achieve O(n) time complexity without external dependencies.
-This gives us the "frequency ranking" needed to identify top-k candidates.
+  Building a frequency map is essential preprocessing.
+  By iterating through the list and incrementally counting occurrences, we achieve O(n) time complexity without external dependencies.
+  This gives us the "frequency ranking" needed to identify top-k candidates.
 
   - Why min-heap of size k instead of sorting all frequencies?
-Sorting all n distinct elements would cost O(n log n). A fixed-size min-heap maintains O(k) space 
-and O(n log k) time complexity because we only push/pop when heap exceeds k elements. 
-The heap's root always holds the minimum frequency among top-k elements, making removal of 
-lower frequencies O(log k).
+  Sorting all n distinct elements would cost O(n log n). A fixed-size min-heap maintains O(k) space and O(n log k) time complexity
+  because we only push/pop when heap exceeds k elements.
+  The heap's root always holds the minimum frequency among top-k elements, making removal of lower frequencies O(log k).
 
   - Why extract with sorted(heap, reverse=True) at the end?
-The heap is a partial ordering, not a complete sort. Sorting the k elements ensures we return 
-them in descending frequency order, providing consistent output. At k elements, sorting costs O(k log k), 
-which doesn't dominate the O(n log k) heap operations.
+  The heap is a partial ordering, not a complete sort.
+  Sorting the k elements ensures we return them in descending frequency order, providing consistent output.
+  At k elements, sorting costs O(k log k), which doesn't dominate the O(n log k) heap operations.
 
 * Logic:
 
@@ -76,6 +75,8 @@ avoiding full sort.
 - Finding most frequently accessed files or endpoints
 - Analytics: top products by purchase frequency, top users by activity
 - Any scenario where you need top-k items by frequency without processing all items
+- (e.g., identify common work order types from logs for team stats, like Phillip's breakdowns).
+
 """
 
 from __future__ import annotations

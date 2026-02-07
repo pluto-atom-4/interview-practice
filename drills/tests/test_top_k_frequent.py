@@ -1,3 +1,27 @@
+"""
+FUNCTION top_k_frequent(nums, k):
+    IF k <= 0: RETURN an empty list
+
+    // Step 1: Build frequency map
+    INITIALIZE freq as an empty map
+    FOR each num in nums:
+        freq[num] = freq[num] + 1 (default to 0)
+
+    // Step 2: Maintain a min-heap of size k
+    INITIALIZE heap as an empty min-priority queue
+    FOR each (value, count) in freq:
+        PUSH (count, value) onto heap
+
+        // If heap exceeds size k, remove the element with the lowest frequency
+        IF size of heap > k:
+            POP from heap
+
+    // Step 3: Sort the remaining k elements by frequency descending
+    SORT heap by count in descending order
+    RETURN the values from the sorted heap
+
+"""
+
 import pytest
 
 from drills.top_k_frequent import top_k_frequent
