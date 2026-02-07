@@ -100,10 +100,10 @@ def graph_bfs(graph: Graph[T], start: T) -> Iterator[T]:
     visited.add(start)
 
     while queue:
-        vertex = queue.popleft()
-        yield vertex
+        wk_vertex = queue.popleft()
+        yield wk_vertex
 
-        for neighbor, _ in graph.adj_list[vertex]:
+        for neighbor, _ in graph.adj_list[wk_vertex]:
             if neighbor not in visited:
                 visited.add(neighbor)
                 queue.append(neighbor)
@@ -119,6 +119,6 @@ def graph_dfs(graph: Graph[T], start: T) -> Iterator[T]:
             visited.add(vertex)
             yield vertex
 
-            for neighbor, _ in reversed(graph.adj_list[vertex]):
-                if neighbor not in visited:
-                    stack.append(neighbor)
+            for wk_neighbor, _ in reversed(graph.adj_list[vertex]):
+                if wk_neighbor not in visited:
+                    stack.append(wk_neighbor)
