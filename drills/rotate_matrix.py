@@ -75,6 +75,8 @@ of swapped dimensions.
 - Graphics transformations: rotating coordinate systems or sprites
 - Data visualization: reorienting data matrices for different presentations
 - Technical interviews: tests 2D array indexing, coordinate geometry, and problem-solving skills
+- (e.g., representing a factory floor layout for work order visualization)
+
 
 * **Integration into Factory Floor Layout Simulation**:
 
