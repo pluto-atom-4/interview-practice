@@ -1,3 +1,24 @@
+"""
+FUNCTION xor_find_duplicate(nums):
+    n = length of nums - 1
+
+    xor_all_nums = 0
+    xor_1_to_n = 0
+
+    // Step 1: XOR all elements present in the input array
+    FOR each num in nums:
+        xor_all_nums = xor_all_nums XOR num
+
+    // Step 2: XOR all possible numbers in the range [1, n]
+    FOR i FROM 1 TO n:
+        xor_1_to_n = xor_1_to_n XOR i
+
+    // Step 3: Combine the results to reveal the duplicate
+    // Identical numbers cancel out (a XOR a = 0), leaving only the duplicate
+    RETURN xor_all_nums XOR xor_1_to_n
+
+"""
+
 import pytest
 
 from drills.xor_find_duplicate import xor_find_duplicate

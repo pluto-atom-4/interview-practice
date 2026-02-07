@@ -57,8 +57,9 @@ leaving just the duplicate. This gives us O(n) time, O(1) space with no sorting 
 
 * **Use Cases**:
 
-Interview questions on bit manipulation, finding duplicates under memory constraints, and demonstrating 
-understanding of XOR properties. Also applicable in duplicate detection for constrained embedded systems.
+- Interview questions on bit manipulation, finding duplicates under memory constraints, and demonstrating understanding of XOR properties.
+Also applicable in duplicate detection for constrained embedded systems.
+- (e.g., flag unique status codes in embedded sensor data).
 """
 
 from __future__ import annotations
