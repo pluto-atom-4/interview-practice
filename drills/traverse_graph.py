@@ -2,7 +2,7 @@
 ## Problem Statement
 
 Implement breadth-first search (BFS) and depth-first search (DFS) graph traversals that yield nodes in visit order.
-The goal is to explore all reachable nodes from a starting vertex, enabling connectivity analysis and shortest-path 
+The goal is to explore all reachable nodes from a starting vertex, enabling connectivity analysis and shortest-path
 discovery. This tests understanding of queue/stack-based traversal and the yield keyword for generator-based iteration.
 BDF is used for level-order exploration. For hierarchical structures: Traverse assembly trees level-by-level for parallel processing checks."
 
@@ -12,15 +12,15 @@ BDF is used for level-order exploration. For hierarchical structures: Traverse a
 
 * For this problem, I'm using **Generator-Based BFS and DFS with Yield**:
 
-Both functions use the yield keyword to return an iterator instead of building a full result list. BFS uses a deque for 
-level-order exploration; DFS uses a stack for depth-first exploration. Generators defer computation, enabling lazy evaluation 
+Both functions use the yield keyword to return an iterator instead of building a full result list. BFS uses a deque for
+level-order exploration; DFS uses a stack for depth-first exploration. Generators defer computation, enabling lazy evaluation
 and memory efficiency—crucial for large graphs where only partial exploration might be needed.
 
 * Key Concepts:
 
   - Why yield instead of building a list?
-Generators allow lazy evaluation: results are produced on-demand rather than computing the entire traversal upfront. 
-For massive graphs, clients might only need the first few nodes, making generators far more efficient than materializing 
+Generators allow lazy evaluation: results are produced on-demand rather than computing the entire traversal upfront.
+For massive graphs, clients might only need the first few nodes, making generators far more efficient than materializing
 the full traversal. This supports infinite graphs and reduces memory footprint significantly.
 
   - Why deque for BFS vs. list for DFS?
@@ -28,7 +28,7 @@ Deque support O(1) popleft() for queue behavior; lists don't (O(n)). For DFS, st
 on lists. Using the right data structure ensures both algorithms run in O(V + E) without hidden quadratic costs.
 
   - Why reverse neighbors before appending in DFS?
-Reversing ensures DFS explores neighbors in their original adjacency order. Without reversal, the stack's LIFO 
+Reversing ensures DFS explores neighbors in their original adjacency order. Without reversal, the stack's LIFO
 behavior would visit neighbors in reverse order, changing the traversal sequence unexpectedly.
 
 * Logic:
@@ -45,8 +45,8 @@ behavior would visit neighbors in reverse order, changing the traversal sequence
 
 * **30-Second Pitch**:
 
-BFS explores level-by-level using a deque queue—all immediate neighbors first, then their neighbors, creating a breadth-wise 
-expansion. DFS explores deeply using a stack—following one path to its end before backtracking, creating depth-wise traversal. 
+BFS explores level-by-level using a deque queue—all immediate neighbors first, then their neighbors, creating a breadth-wise
+expansion. DFS explores deeply using a stack—following one path to its end before backtracking, creating depth-wise traversal.
 Both yield nodes one at a time, enabling lazy evaluation without building the full traversal upfront.
 
 * **Rapid-Fire Version**:
@@ -77,7 +77,22 @@ from typing import Iterator, TypeVar
 
 from .graph import Graph
 
-T = TypeVar('T')
+T = TypeVar("T")
+
+
+def graph_dfs(graph: Graph[T], start: T) -> Iterator[T]:
+    visited = set()
+    stack = [start]
+
+    while stack:
+        vertex = stack.pop()
+        if vertex not in visited:
+            visited.add(vertex)
+            yield vertex
+
+            for wk_neighbor, _ in reversed(graph.adj_list[vertex]):
+                if wk_neighbor not in visited:
+                    stack.append(wk_neighbor)
 
 
 def graph_bfs(graph: Graph[T], start: T) -> Iterator[T]:
@@ -107,18 +122,3 @@ def graph_bfs(graph: Graph[T], start: T) -> Iterator[T]:
             if neighbor not in visited:
                 visited.add(neighbor)
                 queue.append(neighbor)
-
-
-def graph_dfs(graph: Graph[T], start: T) -> Iterator[T]:
-    visited = set()
-    stack = [start]
-
-    while stack:
-        vertex = stack.pop()
-        if vertex not in visited:
-            visited.add(vertex)
-            yield vertex
-
-            for wk_neighbor, _ in reversed(graph.adj_list[vertex]):
-                if wk_neighbor not in visited:
-                    stack.append(wk_neighbor)
