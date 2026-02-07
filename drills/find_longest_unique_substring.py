@@ -104,9 +104,9 @@ def find_longest_unique_substring(s: str) -> str:
 
         last_seen[char] = i  # Update the last seen index of the character
 
-        current_length = i - start + 1  # Calculate current substring length
-        if current_length > max_length:
-            max_length = current_length
+        wk_current_length = i - start + 1  # Calculate current substring length
+        if wk_current_length > max_length:
+            max_length = wk_current_length
             longest_substring = s[start : i + 1]  # Update the longest substring
 
     return longest_substring
