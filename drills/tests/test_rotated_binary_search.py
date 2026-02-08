@@ -1,3 +1,33 @@
+"""
+FUNCTION rotated_binary_search(nums, target):
+    IF nums is empty: RETURN -1
+
+    left = 0
+    right = length of nums - 1
+
+    WHILE left <= right:
+        mid = (left + right) // 2
+
+        IF nums[mid] EQUALS target:
+            RETURN mid
+
+        // Identify which half of the array is sorted
+        IF nums[left] <= nums[mid]:
+            // Left side [left...mid] is sorted
+            IF nums[left] <= target AND target < nums[mid]:
+                right = mid - 1  // Target is in the sorted left half
+            ELSE:
+                left = mid + 1   // Target must be in the right half
+        ELSE:
+            // Right side [mid...right] is sorted
+            IF nums[mid] < target AND target <= nums[right]:
+                left = mid + 1   // Target is in the sorted right half
+            ELSE:
+                right = mid - 1  // Target must be in the left half
+
+    RETURN -1
+"""
+
 import pytest
 
 from drills.rotated_binary_search import rotated_binary_search

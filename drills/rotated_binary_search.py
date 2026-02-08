@@ -73,6 +73,8 @@ half; if no, I search the other half. This achieves O(log n) time despite the ro
 - Rotated database indices
 - Finding pivot points in sorted sequences
 - Optimization problems requiring fast search on transformed sorted data
+- (e.g., search for timestamps in cyclically shifted production logs).
+
 """
 
 def rotated_binary_search(nums: List[int], target: int) -> int:
