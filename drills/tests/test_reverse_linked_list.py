@@ -1,7 +1,27 @@
+"""
+FUNCTION reverse_linked_list(head):
+    // Initialize pointers
+    prev = NULL
+    current = head
+
+    WHILE current is NOT NULL:
+        // 1. Save the next node before we break the link
+        next_node = current.next
+
+        // 2. Reverse the actual link
+        current.next = prev
+
+        // 3. Move pointers forward for the next iteration
+        prev = current
+        current = next_node
+
+    // prev is the new head of the reversed list
+    RETURN prev
+"""
+
 import pytest
 
 from drills.reverse_linked_list import (
-    ListNode,
     build_linked_list,
     linked_list_to_list,
     reverse_linked_list,
