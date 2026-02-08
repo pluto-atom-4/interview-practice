@@ -86,7 +86,7 @@ in urgency order while preventing duplicate work.
 from dataclasses import dataclass
 from typing import List, Optional
 
-from .priority_queue import MaxHeapPriorityQueue
+from .priority_queue_max_heap import MaxHeapPriorityQueue
 
 
 @dataclass

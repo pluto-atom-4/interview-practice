@@ -48,7 +48,7 @@ CLASS MaxHeapPriorityQueue:
 
 import pytest
 
-from drills.priority_queue import MaxHeapPriorityQueue
+from drills.priority_queue_max_heap import MaxHeapPriorityQueue
 
 
 def test_insert_and_peek():

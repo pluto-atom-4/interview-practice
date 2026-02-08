@@ -1,259 +1,160 @@
 """
 ## Problem Statement
 
-Implement a generic priority queue using a min-heap data structure.
-The queue must efficiently enqueue/dequeue elements based on priority, 
-supporting custom comparison logic. This demonstrates mastery of heap operations, 
-generic programming, and custom sorting strategies—core interview topics.
+Implement a priority queue for scheduling factory tasks by urgency level. Design a data structure that
+efficiently retrieves the lowest-urgency task first while supporting fast insertion and deletion. This
+tests understanding of heap data structures, in-place operations, and real-world scheduling systems.
 
 ## Whiteboard Coding Challenge Notes
 
-* For this problem, I'm using a **Min-Heap with Custom Comparators**:
+* For this problem, I'm using an **array-based binary min-heap**:
 
-The min-heap approach leverages a complete binary tree stored in an array, where each 
-parent is smaller than its children. This guarantees O(log n) operations for enqueue/dequeue 
-while maintaining simplicity and space efficiency. Custom comparators enable flexibility 
-for max-heaps and complex priority logic without changing core logic.
+Why this approach? A min-heap provides O(1) peek for the least urgent task and O(log n) insertion/removal,
+making it ideal for priority scheduling where the lowest value has the highest priority. Array storage eliminates pointer overhead and maintains cache
+locality. The binary structure ensures logarithmic depth, minimizing bubble-up/bubble-down iterations.
 
 * Key Concepts:
 
-  - Why use a heap instead of sorting or a linked list?
-  A heap strikes the optimal balance: O(log n) insertion/deletion vs O(n log n) for sorting 
-  or O(n) for naive searches. Arrays provide cache locality and no pointer overhead like 
-  linked lists. This is THE interview-standard data structure for priority queues.
+  - **Why store (priority, task) tuples in a single array?**
 
-  - Why bubble_up and bubble_down instead of rebuilding the entire heap?
-  Incremental repairs maintain O(log n) complexity by adjusting only the affected path 
-  (height of tree) instead of O(n) reconstruction. This laziness principle is critical for 
-  efficient implementations and shows interview-level optimization thinking.
+    Tuples pair urgency with the actual task object, enabling direct comparison by priority while preserving
+    task identity. A single array eliminates parallel data structure synchronization issues and ensures O(1)
+    access to both priority and task during operations. The heap compares only the first element (priority)
+    during heapify operations.
 
-  - Why use a custom comparator function instead of just __lt__?
-  Comparators decouple sorting logic from element types, enabling max-heaps, reverse 
-  ordering, and complex multi-field priorities (e.g., by urgency then name). This showcases 
-  strategy pattern knowledge and flexibility in design.
+  - **Why maintain parent urgency ≤ children urgency (min-heap property)?**
 
-  - Why floor division (//) for parent index calculation?
-  For node at index i: parent = (i-1)//2, left = 2i+1, right = 2i+2. These formulas 
-  encode the complete binary tree structure in an array. Floor division ensures truncation 
-  (e.g., (3-1)//2 = 1, not 1.0), which is critical for correct index arithmetic.
+    The min-heap property ensures the root (index 0) always contains the lowest-priority task. This enables
+    O(1) peek without traversal. When inserting or removing, only the affected path (length O(log n)) needs
+    rebalancing, not the entire heap. The property is maintained by comparing with children during bubble-down
+    and with parent during bubble-up.
+
+  - **Why initialize with parent index `(i-1)//2` and children at `2*i+1`, `2*i+2`?**
+
+    These indices define the implicit binary tree structure within the array. Parent index formula ensures
+    integer division for backward navigation. Child indices scale to 2*i+1 and 2*i+2 to maintain complete
+    binary tree layout. This compact representation uses no extra pointers and enables cache-efficient tree
+    traversal.
 
 * Logic:
 
-1. **Initialize heap:** Maintain internal array and optional custom comparator (default to min-heap).
-2. **Enqueue (Insertion):** Append element to array end, then bubble_up to restore heap property.
-3. **Dequeue (Deletion):** Extract root (highest priority), move last element to root, bubble_down to restore heap property.
-4. **Peek (Read):** Return root element without modification (O(1)).
-5. **Helper Methods:** bubble_up compares with parent; bubble_down compares with smaller child, swapping when needed.
+1. **Initialization:** Create empty heap array
+2. **Insertion:** Append new (priority, task) tuple to heap end, then bubble-up by swapping with parent until heap property restored
+3. **Extraction:** Swap root with last element, remove last, then bubble-down from root until min-heap property restored
+4. **Peek:** Return root element (lowest priority) without modification
+5. **Heapify-up:** From child position, compare with parent; swap and move up if child < parent, else stop
+6. **Heapify-down:** From parent position, compare with both children; swap with smaller child and move down, else stop
 
 * **30-Second Pitch**:
 
-"I'd implement a min-heap using a dynamic array. When we enqueue, we append to the end 
-and bubble up to restore the heap property—each element only compares with its parent, 
-so it's O(log n). For dequeue, we swap the root with the last element, remove it, and 
-bubble down the new root until it's larger than both children. The key insight is that 
-a comparator function makes this generic: swap `a < b` for `a > b` and you have a max-heap. 
-This interview-standard approach handles any priority logic efficiently."
+I'm implementing a min-heap priority queue using an array to store (priority, task) tuples. The root
+always contains the lowest-urgency task. When adding a task, I append it and bubble up to restore the
+min-heap property. When extracting, I swap the root with the last element, remove it, and bubble down.
+This gives O(1) peek and O(log n) insert/remove operations.
 
 * **Rapid-Fire Version**:
 
-- Min-heap in array: parent at (i-1)//2, left at 2i+1, right at 2i+2
-- Enqueue: append, bubble_up vs parent O(log n)
-- Dequeue: swap root with last, bubble_down vs smaller child O(log n)
-- Comparator strategy enables max-heap, custom priorities without code duplication
-- Complete binary tree in array = space-efficient + cache-friendly
-- Lazy repairs (incremental path) beats rebuilding (O(n) cost)
+- Array-based binary min-heap storing (priority, task) tuples
+- Root always holds min-priority task (O(1) peek)
+- Bubble-up on insert, bubble-down on extract
+- Parent index: (i-1)//2; children: 2i+1, 2i+2
+- Heapify operations run in O(log n) due to tree depth
 
 * **Ultra-Minimal One-Liner**:
 
-- Min-heap priority queue with O(log n) enqueue/dequeue via array-based tree + bubble up/down repairs.
+- Min-heap priority queue: array-based binary tree with parent ≤ children, O(1) peek, O(log n) insert/remove via bubble operations.
 
 * **Complexity Analysis**:
 
 - **Time Complexity:**
-  - Enqueue: O(log n) — bubble_up traverses at most tree height
-  - Dequeue: O(log n) — bubble_down traverses at most tree height
-  - Peek: O(1) — direct root access
-  - Build from n elements: O(n) — optimal via heapify, not O(n log n) insertion
+  - Peek: O(1) – direct root access
+  - Insert: O(log n) – bubble-up traverses at most heap height (log n)
+  - Extract: O(log n) – swap + bubble-down traverses at most heap height
+  - Size/is_empty: O(1) – array length check
 
 - **Space Complexity:**
-  - O(n) — array stores n elements, no extra structures for heap operations
-
-* **Use Cases**:
-
-- Task scheduling (urgent tasks dequeued first)
-- Dijkstra's shortest path algorithm (process nearest unvisited node)
-- Huffman coding (build tree by always merging smallest frequencies)
-- Heap sort (repeated dequeue gives sorted output)
-- Load balancing (assign tasks to least-loaded server)
-- Event simulation (process events in time order)
-
+  - O(n) for heap array storing n tasks
 """
 
-from dataclasses import dataclass
-from typing import Callable, Generic, List, Optional, TypeVar
+from __future__ import annotations
+
+from typing import Generic, List, Optional, Tuple, TypeVar
 
 T = TypeVar("T")
 
-@dataclass
-class Task:
-    name: str
-    urgency: int
-
-    # Comparisons: Instead of a compareTo method returning -1, 0, 1 in Java,
-    # Python uses "rich comparison" methods. Overriding __lt__ (less than) is the standard way
-    # to allow objects to be compared in a sorted structure.
-    def __lt__(self, other: "Task") -> bool:
-        # Define 'less than' as lower urgency number = higher priority
-        # to satisfy min-heap logic (lower urgency numbers get dequeued first).
-        return self.urgency < other.urgency
-
-class PriorityQueue(Generic[T]):
+class MinHeapPriorityQueue(Generic[T]):
     """
-    Generic priority queue implementation using a min-heap.
+    Priority Queue implemented as a min-heap using an array-based binary tree.
 
-    Supports custom comparison strategies via the comparator parameter,
-    enabling max-heaps, reverse ordering, and complex priority logic.
-
-    Type parameter T: The type of items stored in the queue.
-                    Can be any type, but comparator must be provided
-                    if items don't support < operator.
+    Stores items as (priority, task) tuples.
     """
-    def __init__(self, comparator: Optional[Callable[[T, T], bool]] = None):
-        """
-        Initialize the priority queue.
-        Args:
-            comparator: Optional comparison function that returns True if the first
-                        argument has higher priority than the second.
-                        Default: a < b (min-heap, items must support < operator)
-                        For max-heap, use: lambda a, b: a > b
-            Examples:
-                min_pq = PriorityQueue()  # Default min-heap
-                max_pq = PriorityQueue(lambda a, b: a > b)  # Max-heap
-                custom_pq = PriorityQueue(lambda a, b: len(a) < len(b))  # Custom logic
-        """
-        self._heap: List[T] = []
-        self._comparator = comparator or (lambda a, b: a < b)
+    def __init__(self) -> None:
+        self._heap: List[Tuple[int, T]] = []
 
-    def enqueue(self, t: T) -> None:
-        """
-        Add a task and bubble it up to maintain heap property.
-        Time Complexity: O(log n)
-        Space Complexity: O(1) amortized
-        """
-        self._heap.append(t)
-        self._bubble_up(len(self._heap) - 1)
+    # -----------------------------
+    # Heap helper methods
+    # -----------------------------
+    def _parent(self, index: int) -> int:
+        return (index - 1) // 2
 
-    def dequeue(self) -> Optional[Task]:
-        """
-        Remove and return the highest-priority task. O(log n)
+    def _left(self, index: int) -> int:
+        return 2 * index + 1
 
-        Returns None if the queue is empty.
-        Time Complexity: O(log n)
-        Space Complexity: O(1) amortized
-        """
-        # Truthiness: Instead of heap.size() == 0, modern Python uses if not self._heap: to check for empty lists.
-        if not self._heap:
-            return None
+    def _right(self, index: int) -> int:
+        return 2 * index + 2
 
-        root = self._heap[0]
-        last_item = self._heap.pop()
+    def _swap(self, i: int, j: int) -> None:
+        self._heap[i], self._heap[j] = self._heap[j], self._heap[i]
 
-        if self._heap:
-            self._heap[0] = last_item
-            self._bubble_down(0)
+    # -----------------------------
+    # Core operations
+    # -----------------------------
+    def insert(self, task: T, priority: int) -> None:
+        """Insert a task with a given priority."""
+        self._heap.append((priority, task))
+        self._heapify_up(len(self._heap) - 1)
 
-        return root
-
-    def peek(self) -> Optional[Task]:
-        """
-        View the highest-priority task without removing it.
-        
-        Returns None if the queue is empty.
-        Time Complexity: O(1)
-        Space Complexity: O(1)
-        """
-        return self._heap[0] if self._heap else None
-
-    def is_empty(self) -> bool:
-        """Check if the priority queue is empty."""
-        return len(self._heap) == 0
-
-    def size(self) -> int:
-        """Return the number of tasks in the priority queue."""
-        return len(self._heap)
-
-    # =====================================================================
-    # Private Helper Methods: Heap Maintenance
-    # =====================================================================
-    def _bubble_up(self, index: int) -> None:
-        """
-        Restore heap property by moving an element up the tree.
-
-        Called after adding a new element.
-        Moves the element up until it finds its correct position.
-
-        Time Complexity: O(log n) - height of the tree
-        Space Complexity: O(1)
-        """
-
-        # While loop continues until we reach root (index 0) or find a parent with higher urgency.
-        # The loop terminates because each swap moves the element up (smaller index), eventually hitting root.
+    def _heapify_up(self, index: int) -> None:
         while index > 0:
-            # Integer Division: Java's / on integers automatically truncates. 
-            # In Python, you must use the floor division operator // to get the same result when calculating parent_idx.
-            parent_idx = (index - 1) // 2
-
-            # Compare current with parent using the __lt__ defined above
-            if self._heap[index] < self._heap[parent_idx]:
-                # Swapping: Python allows for elegant one-line swaps: a, b = b, a.
-                self._heap[index], self._heap[parent_idx] = \
-                    self._heap[parent_idx], self._heap[index]
-                index = parent_idx
+            parent = self._parent(index)
+            if self._heap[index][0] < self._heap[parent][0]:
+                self._swap(index, parent)
+                index = parent
             else:
                 break
 
-    def _bubble_down(self, index: int) -> None:
-        """
-        Restore heap property by moving an element down the tree.
+    def extract_min(self) -> Optional[Tuple[int, T]]:
+        """Remove and return the lowest-priority task."""
+        if not self._heap:
+            return None
+        self._swap(0, len(self._heap) - 1)
+        min_item = self._heap.pop()
+        self._heapify_down(0)
+        return min_item
 
-        Called after removing the root element.
-        Moves the element down until it finds its correct position.
-
-        Time Complexity: O(log n) - height of the tree
-        Space Complexity: O(1)
-        """
-
-        # While loop continues until current is larger than both children or has no children.
-        # The loop terminates because each swap moves the element down (larger index), eventually hitting a leaf.
+    def _heapify_down(self, index: int) -> None:
         size = len(self._heap)
         while True:
-            left_child = 2 * index + 1
-            right_child = 2 * index + 2
+            left = self._left(index)
+            right = self._right(index)
             smallest = index
-
-            if (left_child < size and
-                    self._heap[left_child] < self._heap[smallest]):
-                smallest = left_child
-
-            if (right_child < size and
-                    self._heap[right_child] < self._heap[smallest]):
-                smallest = right_child
-
+            if left < size and self._heap[left][0] < self._heap[smallest][0]:
+                smallest = left
+            if right < size and self._heap[right][0] < self._heap[smallest][0]:
+                smallest = right
             if smallest != index:
-                # Swapping: Python allows for elegant one-line swaps: a, b = b, a.
-                self._heap[index], self._heap[smallest] = \
-                    self._heap[smallest], self._heap[index]
+                self._swap(index, smallest)
                 index = smallest
             else:
                 break
 
-# Example Usage
-if __name__ == "__main__":
-    pq = PriorityQueue()
-    pq.enqueue(Task("Low Priority", 1))
-    pq.enqueue(Task("Urgent", 10))
-    pq.enqueue(Task("Medium", 5))
+    def peek(self) -> Optional[Tuple[int, T]]:
+        """Return the lowest-priority task without removing it."""
+        return self._heap[0] if self._heap else None
 
-    while not pq.is_empty():
-        task = pq.dequeue()
-        print(f"Executing: {task.name} with urgency {task.urgency}")
+    def size(self) -> int:
+        return len(self._heap)
+
+    def is_empty(self) -> bool:
+        return len(self._heap) == 0
+
