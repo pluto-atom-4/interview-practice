@@ -79,8 +79,9 @@ Use array values as indices to mark seen elements by negation—when you find a 
 
 * **Use Cases**:
 
-Finding duplicates in constrained ranges (LeetCode 287, 442), detecting cycles in linked lists (similar indexing principle),
+- Finding duplicates in constrained ranges (LeetCode 287, 442), detecting cycles in linked lists (similar indexing principle),
 interview problems testing space-optimization awareness, and scenarios where modifying input is acceptable.
+- To prevent the redundant factory tasks
 """
 
 

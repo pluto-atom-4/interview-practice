@@ -63,8 +63,9 @@ DFS with three-color marking detects back edges (edges to active recursion nodes
 
 * **Use Cases**:
 
-Task scheduling validation (detecting impossible dependencies), deadlock detection in resource allocation, 
+- Task scheduling validation (detecting impossible dependencies), deadlock detection in resource allocation,
 compiler dependency analysis, circuit timing analysis in hardware design.
+- To prevent infinite loops in task execution due to circular dependencies.
 """
 
 from typing import TypeVar
