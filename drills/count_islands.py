@@ -1,36 +1,31 @@
-from __future__ import annotations
-
-from collections import deque
-from typing import Deque, List, Tuple
-
 """
 ## Problem Statement
 
-Count the number of connected components ("islands") in a 2D grid where 1 represents land and 0 represents 
-water. Islands are connected 4-directionally (up, down, left, right). This tests understanding of graph 
+Count the number of connected components ("islands") in a 2D grid where 1 represents land and 0 represents
+water. Islands are connected 4-directionally (up, down, left, right). This tests understanding of graph
 traversal, connected components, and handling 2D grid problems.
 
 ## Whiteboard Coding Challenge Notes
 
 * For this problem, I'm using **Breadth-First Search (BFS) with a Visited Matrix**:
 
-BFS systematically explores each connected component without recursion, avoiding potential stack overflow 
-on large grids. A visited matrix ensures we don't reprocess cells, and exploring all 4 directions from each 
+BFS systematically explores each connected component without recursion, avoiding potential stack overflow
+on large grids. A visited matrix ensures we don't reprocess cells, and exploring all 4 directions from each
 cell captures the complete connected component before counting it as one island.
 
 * Key Concepts:
 
   - Why BFS over DFS for 2D grid traversal?
-BFS is iterative (using a queue) rather than recursive, preventing stack overflow on very large grids. 
+BFS is iterative (using a queue) rather than recursive, preventing stack overflow on very large grids.
 It explores level-by-level, naturally discovering all connected land cells before finishing an island.
 
   - Why maintain a visited matrix separate from the grid?
-Modifying the original grid (marking visited cells with 0) may not be acceptable depending on problem 
-constraints. A separate visited matrix preserves the input and provides clearer intent—explicitly tracking 
+Modifying the original grid (marking visited cells with 0) may not be acceptable depending on problem
+constraints. A separate visited matrix preserves the input and provides clearer intent—explicitly tracking
 which cells we've processed. This is a best practice for interview problems.
 
   - Why check bounds and visited status before adding to queue?
-Prevents duplicate processing and out-of-bounds errors. Marking as visited immediately when enqueueing 
+Prevents duplicate processing and out-of-bounds errors. Marking as visited immediately when enqueueing
 (not when de-queuing) avoids adding duplicate entries to the queue, keeping its size manageable.
 
 * Logic:
@@ -53,8 +48,8 @@ Prevents duplicate processing and out-of-bounds errors. Marking as visited immed
 
 * **30-Second Pitch**:
 
-I'm using BFS with a separate visited matrix. When I find an unvisited land cell, I explore all connected 
-land cells (4-directionally adjacent) using a queue, marking them as visited. Once BFS finishes exploring 
+I'm using BFS with a separate visited matrix. When I find an unvisited land cell, I explore all connected
+land cells (4-directionally adjacent) using a queue, marking them as visited. Once BFS finishes exploring
 a complete connected component, I count it as one island. This approach is iterative, avoiding stack issues.
 
 * **Rapid-Fire Version**:
@@ -80,6 +75,12 @@ a complete connected component, I count it as one island. This approach is itera
 - Network analysis identifying isolated subnets
 - Game development: counting connected game regions
 """
+
+from __future__ import annotations
+
+from collections import deque
+from typing import Deque, List, Tuple
+
 
 def count_islands(grid: List[List[int]]) -> int:
     """
