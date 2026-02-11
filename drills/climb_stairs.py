@@ -1,7 +1,3 @@
-from __future__ import annotations
-
-from typing import Dict
-
 """
 ## Problem Statement
 
@@ -57,6 +53,9 @@ all values, I keep only the last two values and update them iteratively, achievi
 - **Space Complexity:** O(1) — only two variables regardless of n
 """
 
+from __future__ import annotations
+
+
 def climb_stairs(n: int) -> int:
     """
     Return the number of distinct ways to climb n stairs
@@ -76,6 +75,7 @@ def climb_stairs(n: int) -> int:
         return 0
     if n == 1:
         return 1
+
     if n == 2:
         return 2
 
