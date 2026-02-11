@@ -71,7 +71,8 @@ complexity is O(n) with a single pass and O(1) space (at most 256 ASCII characte
 - Interview screening: Tests fundamental data structure knowledge (hash tables, sliding window)
 - Substring optimization: Problems requiring longest/shortest substrings with constraints
 - Pattern detection: Finding non-repeating sequences in DNA strands, network packets, or log analysis
-- Video streaming: Finding longest buffer windows without frame duplication
+- Video streaming: Finding the longest buffer windows without frame duplication
+- For manufacturing: this could be used to analyze sequences of tasks or events to find the longest stretch without repeats, which might indicate efficiency or bottlenecks in a process.
 """
 
 
