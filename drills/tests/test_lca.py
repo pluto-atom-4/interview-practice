@@ -1,3 +1,33 @@
+"""
+FUNCTION mergeLists(head1, head2):
+    // Create a dummy node to act as the starting point
+    dummy = NEW SinglyLinkedListNode(0)
+    current = dummy
+
+    // Iterate while both lists have nodes remaining
+    WHILE head1 IS NOT EMPTY AND head2 IS NOT EMPTY:
+        IF head1.data <= head2.data:
+            // Attach head1 to the merged list and advance head1
+            current.next = head1
+            head1 = head1.next
+        ELSE:
+            // Attach head2 to the merged list and advance head2
+            current.next = head2
+            head2 = head2.next
+
+        // Move the pointer in the merged list forward
+        current = current.next
+
+    // If one list is longer than the other, attach the remainder
+    IF head1 IS NOT EMPTY:
+        current.next = head1
+    ELSE IF head2 IS NOT EMPTY:
+        current.next = head2
+
+    // The actual merged list starts after the dummy node
+    RETURN dummy.next
+"""
+
 import pytest
 
 from drills.binary_search_tree import Node
