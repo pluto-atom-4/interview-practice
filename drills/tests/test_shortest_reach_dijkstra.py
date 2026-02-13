@@ -54,7 +54,7 @@ FUNCTION shortestReach(n, edges, s):
 
 import pytest
 
-from drills.dijkstra_shortest_reach import shortestReach
+from drills.shortest_reach_dijkstra import shortestReach
 
 
 @pytest.mark.parametrize(
