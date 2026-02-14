@@ -1,4 +1,31 @@
 """
+USING BSF with PQ
+
+INIT adj set()... size: n + 1
+LOOP each of edges -> src, dst
+  SET: adj src -> dst and dst -> src
+
+INIT distances -1... size: n + 1
+SET distances[s] = 0
+
+INIT pq [s]
+SET default_weight = 6
+
+# main process
+LOOP: pq
+  POP pq -> u
+  LOOP: each of adj[u] -> v
+    CHK|BSF: distances[v] == -1 # not visited
+       SET: distances[v] = distances[u] + default_weight
+       ENQ: v -> pq
+
+# post process
+SET result from distances skipping the first item and index is s
+
+RET: result
+"""
+
+"""
 FUNCTION bfs(n, m, edges, s):
     // 1. Build Adjacency List
     // Use sets to automatically handle duplicate edges

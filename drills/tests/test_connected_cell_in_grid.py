@@ -1,4 +1,35 @@
 """
+DFS with 8-way connectivity
+
+STATIC definition for DIRECTIONS
+
+GATE not grid || not grid[0]
+INIT rows,cols, max_size: 0
+     visited: set()
+
+# main process
+LOOP: 0...rows:
+   LOOP: 0...cols:
+      CHK: grid[row][col] == 1 and (row, col) not in visited
+      SET|DFS:  current_region_size <- dfs call
+      UPD: max_size with current_region_size if the one is bigger
+
+RET: max_size
+
+
+# DFS process <- r:int, c:int
+CHK: out of grid (4 corners) or target cell is 0 or (r, c) in visited -> RET: 0
+
+SET: size: 1
+ADD: (r, c) -> visited
+
+LOOP: each of 8-way -> dr, dc
+   INC|DFS: size += call DFS(d+dr, c+dc)
+
+RET: size
+"""
+
+"""
 FUNCTION get_region_size(r, c, grid, visited, rows, cols):
     // Boundary check, wall check (0), or already visited check
     IF r < 0 OR r >= rows OR c < 0 OR c >= cols:

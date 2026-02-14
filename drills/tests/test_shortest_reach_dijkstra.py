@@ -1,4 +1,38 @@
 """
+min-heap PQ with a hash table
+
+INIT adj: {}... size: n + 1
+LOOP: each edges -> u, v, w
+  CHK: u = v -> Continue
+
+  CHK: keep minimum weight v not in adj[u] or w < adj[u][v]
+    ADD adj src -> dst and dst -> src
+
+ INIT distances float('inf')... size: n + 1
+ SET distances[s] = 0
+
+# main process
+
+ INIT pq [(0, s)]
+
+ LOOP: pq
+   POP: pq -> d, u
+
+   CHK:keep minimum weight d > distances[u] -> Continue
+
+   LOOP: each of adj[u].items() -> v, weight
+      CHK: distances[u] + weight < distances[v]
+         UPD: distances[v] = distances[u] + weight
+         PUSH: (distance[v], v) -> pq
+
+# post process
+SET result from the distances skipping the first item and index is the starting node
+     NOTE: adjust the value from float('inf') then -1
+
+RET: result
+"""
+
+"""
 FUNCTION shortestReach(n, edges, s):
     // 1. Build Adjacency List
     // Create a list of dictionaries to handle parallel edges by keeping min weight
