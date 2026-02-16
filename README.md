@@ -8,15 +8,19 @@ Welcome to your all-in-one monorepo for practicing coding interview questions in
 
 ```
 interview-practice/
- ├── algorithms/ # Sorting, searching, recursion, etc.
- ├── data_structures/ # Arrays, linked lists, trees, graphs
- ├── system_design/ # Notes and mock designs
- ├── ood/ # Object-oriented design and patterns
- ├── leetcode/ # Individual LeetCode problems
- ├── utils/ # Helper functions and utilities
- ├── tests/ # Pytest-based unit tests
- ├── requirements.txt # (Deprecated) Legacy dependencies file
- └── README.md # You're here!
+ ├── algorithms/           # Sorting, searching, recursion, etc.
+ ├── data_structures/      # Arrays, linked lists, trees, graphs
+ ├── system_design/        # Notes and mock designs
+ ├── ood/                  # Object-oriented design and patterns
+ ├── leetcode/             # Individual LeetCode problems
+ ├── utils/                # Helper functions and utilities
+ ├── tests/                # Pytest-based unit tests
+ ├── benchmarks/           # Performance benchmarks and comparisons
+ ├── docs/                 # Project documentation and notes
+ ├── drills/               # Practice drills and problem scripts
+ ├── notebooks/            # Jupyter notebooks for exploration
+ ├── generated/            # Auto-generated docs and media (by Copilot/Manim)
+ └── README.md             # You're here!
 ```
 ---
 
@@ -24,6 +28,7 @@ interview-practice/
 
 This project uses [uv](https://github.com/astral-sh/uv) for fast, modern Python dependency management. uv is a drop-in replacement for pip and pip-tools, supporting PEP 621/pyproject.toml natively.
 
+- **Python version:** 3.12+
 - **Why uv?**
   - Much faster than pip
   - Handles modern Python packaging (pyproject.toml)
@@ -38,7 +43,7 @@ This project uses [uv](https://github.com/astral-sh/uv) for fast, modern Python 
    git clone https://github.com/your-username/interview-practice.git
    cd interview-practice
    ```
-2. **Create and activate a virtual environment**
+2. **Create and activate a virtual environment (Python 3.12+)**
    ```
    # Remove old venv if present
    rmdir /s /q venv  # Windows (run in PowerShell)
@@ -60,10 +65,22 @@ This project uses [uv](https://github.com/astral-sh/uv) for fast, modern Python 
 4. **Install dependencies with uv**
    ```
    uv pip install .
-   # For dev dependencies (testing, Jupyter, formatting):
+   # For dev dependencies (testing, Jupyter, formatting, pre-commit):
    uv pip install .[dev]
    ```
-5. **Run tests**
+5. **Install and enable pre-commit hooks**
+   ```
+   pre-commit install
+   # Run all hooks on all files (optional):
+   pre-commit run --all-files
+   ```
+6. **(Optional) Install Jupyter kernel for this environment**
+   ```
+   python -m ipykernel install --user --name=interview-practice
+   # Launch Jupyter
+   jupyter notebook
+   ```
+7. **Run tests**
    ```
    pytest
    ```
@@ -72,22 +89,23 @@ This project uses [uv](https://github.com/astral-sh/uv) for fast, modern Python 
 > Jupyter and notebook tools are included as dev dependencies. Activate `.venv` before running notebooks or scripts.
 
 ## 🧹 Code Quality
-This project uses **Black** and **isort** for formatting. Pre-commit hooks are configured to run automatically before each commit.
+This project uses **Black** and **isort** for formatting. Pre-commit hooks are configured to run automatically before each commit (see `.pre-commit-config.yaml`).
 To run manually:
 ```
 pre-commit run --all-files
 ```
 
 ## 🧪 How to Contribute
-- Add new problems under `leetcode/` or `algorithms/`
+- Add new problems under `leetcode/`, `algorithms/`, or `drills/`
 - Write clean, well-documented code
 - Add corresponding tests in `tests/`
 - Format with `black` and `isort` before committing
+- Ensure pre-commit hooks pass before pushing
 
 ## 📚 Resources
-- (LeetCode)[https://leetcode.com/]
-- (System Design Primer)[https://github.com/donnemartin/system-design-primer]
-- (Grokking the System Design Interview)[https://www.educative.io/courses/grokking-the-system-design-interview]
+- [LeetCode](https://leetcode.com/)
+- [System Design Primer](https://github.com/donnemartin/system-design-primer)
+- [Grokking the System Design Interview](https://www.educative.io/courses/grokking-the-system-design-interview)
 
 ## 🚀 Goals
 - Build a strong foundation in problem-solving
