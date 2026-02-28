@@ -68,40 +68,29 @@ Space Complexity: O(V + E)
 This algorithm demonstrates topological sorting, cycle detection, and graph algorithms essential
 for understanding dependency management, package installation, build systems, and data pipeline validation.
 """
-
+from collections import deque
 from typing import Dict, List, Set
 
 
-def canFinish(numCourses: int, prerequisites: List[List[int]]) -> bool:
-    """
-    Pure functional-style solution for Course Schedule.
-    Detects cycles using DFS with immutable visited sets.
-    """
+def can_finish(num_courses: int, prerequisites: List[List[int]]) -> bool:
+    adj = [[] for _ in range(num_courses)]
+    indegree = [0] * num_courses
 
-    # Build adjacency list (functional: returns new dict)
-    graph: Dict[int, List[int]] = {
-        i: [] for i in range(numCourses)
-    }
-    for a, b in prerequisites:
-        graph[a] = graph[a] + [b]  # functional append
+    for course, prereq in prerequisites:
+        adj[prereq].append(course)
+        indegree[course] += 1
 
-    # DFS returns True if no cycle from this node
-    def dfs(course: int, visiting: Set[int], visited: Set[int]) -> bool:
-        if course in visiting:
-            return False  # cycle detected
-        if course in visited:
-            return True   # already processed safely
+    # Queue of all nodes with no incoming edges
+    queue = deque([i for i in range(num_courses) if indegree[i] == 0])
+    visited = 0
 
-        new_visiting = visiting | {course}
+    while queue:
+        node = queue.popleft()
+        visited += 1
 
-        # Explore neighbors
-        for prereq in graph[course]:
-            if not dfs(prereq, new_visiting, visited):
-                return False
+        for neighbor in adj[node]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                queue.append(neighbor)
 
-        # Mark as fully processed
-        new_visited = visited | {course}
-        return True
-
-    # Check all courses
-    return all(dfs(c, set(), set()) for c in range(numCourses))
+    return visited == num_courses

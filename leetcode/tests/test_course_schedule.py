@@ -1,6 +1,6 @@
 import pytest
 
-from leetcode.course_schedule import canFinish
+from leetcode.course_schedule import can_finish
 
 
 @pytest.mark.parametrize("numCourses, prerequisites, expected", [
@@ -13,4 +13,4 @@ from leetcode.course_schedule import canFinish
     (4, [[1,0],[2,1],[0,2]], False),         # Cycle in chain
 ])
 def test_canFinish(numCourses, prerequisites, expected):
-    assert canFinish(numCourses, prerequisites) == expected
+    assert can_finish(numCourses, prerequisites) == expected
