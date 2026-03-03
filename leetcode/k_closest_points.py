@@ -68,12 +68,12 @@ def k_closest(points: List[List[int]], k: int) -> List[List[int]]:
     Uses a min-heap based on squared Euclidean distance.
     """
     # Build a heap with (distance, point)
-    heap = []
+    heap: List[tuple[int, List[int]]] = []
     for (x, y) in points:
         dist = x * x + y * y  # squared distance
         heapq.heappush(heap, (dist, [x, y]))
 
-    result = []
+    result: List[List[int]] = []
     for _ in range(k):
         _, point = heapq.heappop(heap)
         result.append(point)
