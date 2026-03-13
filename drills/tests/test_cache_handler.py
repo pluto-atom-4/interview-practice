@@ -550,3 +550,93 @@ class TestCacheHandlerEdgeCases:
         cache.put("k1", "v1_new")
         assert cache.count() == 2
 
+
+class TestCacheHandlerWhitespaceNormalization:
+    """Test whitespace normalization in command parsing."""
+
+    def test_execute_extra_spaces_between_tokens(self):
+        """execute() should handle extra spaces between command tokens."""
+        cache = CacheHandler()
+        results = cache.execute(["PUT   key1   value1"])
+        assert results == ["ACCEPTED"]
+        assert cache.get("key1") == "value1"
+
+    def test_execute_extra_spaces_in_get(self):
+        """execute() should handle extra spaces in GET command."""
+        cache = CacheHandler()
+        cache.put("key1", "value1")
+        results = cache.execute(["GET    key1"])
+        assert results == ["value1"]
+
+    def test_execute_extra_spaces_in_delete(self):
+        """execute() should handle extra spaces in DELETE command."""
+        cache = CacheHandler()
+        cache.put("key1", "value1")
+        results = cache.execute(["DELETE    key1"])
+        assert results == ["ACCEPTED"]
+        assert cache.get("key1") == "NOT FOUND"
+
+    def test_execute_extra_spaces_in_patch(self):
+        """execute() should handle extra spaces in PATCH command."""
+        cache = CacheHandler()
+        cache.put("key1", "value1", 5000)
+        results = cache.execute(["PATCH   key1   TTL=10000"])
+        assert results == ["ACCEPTED"]
+        assert cache.get("key1") == "value1"
+
+    def test_execute_extra_spaces_with_duration(self):
+        """execute() should handle extra spaces with PUT duration."""
+        cache = CacheHandler()
+        results = cache.execute(["PUT   key1   value1   5000"])
+        assert results == ["ACCEPTED"]
+        assert cache.get("key1") == "value1"
+
+    def test_execute_leading_trailing_spaces_in_command(self):
+        """execute() should handle leading/trailing spaces in command."""
+        cache = CacheHandler()
+        # Note: The user may strip leading/trailing spaces before split(),
+        # or split() naturally handles them (it removes all leading/trailing)
+        results = cache.execute(["  PUT key1 value1  "])
+        assert results == ["ACCEPTED"]
+        assert cache.get("key1") == "value1"
+
+    def test_execute_tabs_as_whitespace(self):
+        """execute() should treat tabs as whitespace."""
+        cache = CacheHandler()
+        results = cache.execute(["PUT\tkey1\tvalue1"])
+        assert results == ["ACCEPTED"]
+        assert cache.get("key1") == "value1"
+
+    def test_execute_mixed_spaces_and_tabs(self):
+        """execute() should handle mixed spaces and tabs."""
+        cache = CacheHandler()
+        results = cache.execute(["PUT  \t key1 \t value1"])
+        assert results == ["ACCEPTED"]
+        assert cache.get("key1") == "value1"
+
+    def test_execute_whitespace_in_multiple_commands(self):
+        """execute() should normalize whitespace in all commands."""
+        cache = CacheHandler()
+        commands = [
+            "PUT   key1   value1",
+            "GET  key1",
+            "PATCH   key1   TTL=5000",
+            "DELETE    key1"
+        ]
+        results = cache.execute(commands)
+        assert results == ["ACCEPTED", "value1", "ACCEPTED", "ACCEPTED"]
+
+    def test_execute_whitespace_with_invalid_commands(self):
+        """execute() should still detect invalid commands with extra whitespace."""
+        cache = CacheHandler()
+        results = cache.execute(["PUT   key1"])  # Missing value, even with extra spaces
+        assert results == ["INVALID COMMAND"]
+
+    def test_execute_whitespace_preserves_key_value_identity(self):
+        """Whitespace normalization should not affect key/value content."""
+        cache = CacheHandler()
+        cache.execute(["PUT key123 valueABC"])
+        # Should be able to retrieve with exact key
+        results = cache.execute(["GET key123"])
+        assert results == ["valueABC"]
+
