@@ -21,22 +21,33 @@ class CacheHandler:
         # key -> (value, expiration_timestamp or None)
         self.store: Dict[str, Tuple[Any, Optional[float]]] = {}
 
-    def _is_expired(self, key: str) -> bool:
-        """Check if a key has expired."""
+    def _get_unexpired_entry(self, key: str) -> Optional[Tuple[Any, Optional[float]]]:
+        """
+        Return (value, expiration) for a key only if it exists and isn't expired.
+        Performs lazy cleanup by deleting the key if expired.
+        
+        Args:
+            key: The cache key to check
+            
+        Returns:
+            (value, expiration) tuple if key exists and is unexpired, else None
+        """
         if key not in self.store:
-            return False
+            return None
 
-        _, exp = self.store[key]
+        value, exp = self.store[key]
+        
+        # Key with no expiration is always valid
         if exp is None:
-            return False
-
+            return (value, exp)
+        
+        # Check if expired
         now = time.time() * 1000
-        return exp <= now
-
-    def _cleanup_expired(self, key: str) -> None:
-        """Remove key if it has expired."""
-        if self._is_expired(key):
+        if exp <= now:
             del self.store[key]
+            return None
+        
+        return (value, exp)
 
     def put(self, key: str, value: Any, duration: Optional[int] = None) -> str:
         """
@@ -68,14 +79,11 @@ class CacheHandler:
         Returns:
             The value if key exists and not expired, else "NOT FOUND"
         """
-        if key not in self.store:
+        entry = self._get_unexpired_entry(key)
+        if entry is None:
             return "NOT FOUND"
 
-        if self._is_expired(key):
-            self._cleanup_expired(key)
-            return "NOT FOUND"
-
-        value, _ = self.store[key]
+        value, _ = entry
         return value
 
     def delete(self, key: str) -> str:
@@ -88,8 +96,7 @@ class CacheHandler:
         Returns:
             "ACCEPTED" if key was deleted, "NOT FOUND" if key doesn't exist or is expired
         """
-        if key not in self.store or self._is_expired(key):
-            self._cleanup_expired(key)
+        if self._get_unexpired_entry(key) is None:
             return "NOT FOUND"
 
         del self.store[key]
@@ -106,11 +113,11 @@ class CacheHandler:
         Returns:
             "ACCEPTED" if TTL was set, "NOT FOUND" if key doesn't exist or is expired
         """
-        if key not in self.store or self._is_expired(key):
-            self._cleanup_expired(key)
+        entry = self._get_unexpired_entry(key)
+        if entry is None:
             return "NOT FOUND"
 
-        value, _ = self.store[key]
+        value, _ = entry
         now = time.time() * 1000
         exp_time = now + ttl
         self.store[key] = (value, exp_time)
@@ -123,16 +130,9 @@ class CacheHandler:
         Returns:
             Number of unexpired keys
         """
-        now = time.time() * 1000
-        expired_keys = []
-
-        for key, (_, exp) in self.store.items():
-            if exp is not None and exp <= now:
-                expired_keys.append(key)
-
-        for key in expired_keys:
-            del self.store[key]
-
+        # Clean up expired keys by attempting to retrieve each one
+        expired_keys = [k for k in list(self.store.keys()) if self._get_unexpired_entry(k) is None]
+        
         return len(self.store)
 
     def execute(self, commands: List[str]) -> List[str]:
@@ -154,6 +154,7 @@ class CacheHandler:
         results = []
 
         for cmd in commands:
+            # Normalize whitespace around command tokens
             parts = cmd.split()
             if not parts:
                 continue
@@ -207,7 +208,6 @@ class CacheHandler:
                     results.append(self.patch(key, ttl))
                 except ValueError:
                     results.append("INVALID TTL VALUE")
-                    continue
 
             else:
                 results.append("UNKNOWN COMMAND")
