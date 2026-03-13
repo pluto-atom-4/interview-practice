@@ -26,11 +26,18 @@ Use this skill when you need to:
 A python-header-note should include:
 
 1. **Problem Statement** - Clear description of what the code solves
-2. **Algorithm Explanation** - How the solution works
-3. **Summary Variations**:
+2. **Whiteboard Coding Challenge Notes** - The algorithm or technique to be used for this problem 
+   - Ultra-minimal one-liner (core concept in a sentence)
+   - Complexity Analysis (time and space)
+3. **Algorithm Explanation** - How the solution works
+   - Key concepts with "why/how" explanations
+4. **Algorithm Logic** - High-level flowchart of how the algorithm executes
+   - Numbered steps describing the flow
+   - Key decision points and termination conditions
+5. **Summary Variations**:
    - 30-second pitch (medium detail for quick understanding)
    - Rapid-fire version (key points only)
-   - Ultra-minimal one-liner (core concept in a sentence)
+6. **Use Cases** - Where/when this solution is applicable
 
 ## Example Format
 
@@ -44,6 +51,17 @@ A python-header-note should include:
 
 * For this problem, I'm using [approach/algorithm name]:
 
+* **Ultra-Minimal One-Liner**:
+
+- [Single sentence capturing the essence]
+
+* **Complexity Analysis**:
+
+- **Time Complexity:** [Expression with explanation]
+- **Space Complexity:** [Expression with explanation]
+
+## Algorithm Explanation
+
 [Brief overview of why this approach is suitable]
 
 * Key Concepts:
@@ -54,12 +72,14 @@ A python-header-note should include:
   - [Concept 2: Why/How?]
 [Detailed explanation with implementation considerations]
 
-* Logic:
+## Algorithm Logic
 
-1. [Step 1 description]
-2. [Step 2 description]
-3. [Step 3 description]
-[Continue as needed]
+1. [Step 1: initialization and setup]
+2. [Step 2: core algorithm logic]
+3. [Step 3: main iteration/processing]
+4. [Step 4: termination and return]
+
+## Summary Variations
 
 * **30-Second Pitch**:
 
@@ -71,16 +91,7 @@ A python-header-note should include:
 - [Key point 2]
 - [Key point 3]
 
-* **Ultra-Minimal One-Liner**:
-
-- [Single sentence capturing the essence]
-
-* **Complexity Analysis**:
-
-- **Time Complexity:** [Expression with explanation]
-- **Space Complexity:** [Expression with explanation]
-
-* **Use Cases**:
+## Use Cases:
 
 [Where/when this solution is applicable]
 """
@@ -105,7 +116,33 @@ The goal is to achieve this efficiently by minimizing comparisons and swaps.
 This tests understanding of in-place algorithms and optimization techniques.
 ```
 
-### 2. Key Concepts Section
+### 2. Whiteboard Coding Challenge Notes
+
+**What to include:**
+- Algorithm/approach name (e.g., "GAP method")
+- Brief rationale for choosing this approach
+- Complexity analysis (time and space) with explanations
+
+**Ultra-Minimal One-Liner:**
+- Single sentence
+- Captures essence for quick reference
+- Includes algorithm name + complexity
+
+**Example:**
+```
+
+For this problem, I'm using an in-place merging technique based on the GAP method, which allows us to merge two sorted arrays efficiently without extra space.
+
+- Ultra-Minimal One-Liner:
+Use the GAP method to merge in place with O((n+m) log(n+m)) time and O(1) space.
+
+- Complexity Analysis:
+  - Time Complexity: O((n+m) log(n+m)) due to the gap reduction and comparisons across both arrays.
+  - Space Complexity: O(1) since we are merging in place without extra data structures.
+```
+
+### 3. Key Concepts Section
+
 **What to include:**
 - 2-3 critical design decisions
 - For each: explain WHY (motivation) and HOW (implementation)
@@ -127,7 +164,7 @@ are compared first, resolving large inversions early. The reduction formula
 full sort completion.
 ```
 
-### 3. Logic Section
+### 4. Logic Section
 **What to include:**
 - Numbered steps of the algorithm
 - High-level description (not pseudo-code, not line-by-line)
@@ -141,8 +178,8 @@ full sort completion.
 4. [Termination: when and why does it stop?]
 ```
 
-### 4. Interview Talking Points
-**Create three formats:**
+### 5. Summary Variations
+**Create two formats:**
 
 **30-Second Pitch:** 
 - Natural speech pattern
@@ -153,11 +190,6 @@ full sort completion.
 - Bullet points
 - Key techniques and trade-offs
 - "What would you say if interrupted?"
-
-**Ultra-Minimal One-Liner:**
-- Single sentence
-- Captures essence for quick reference
-- Includes algorithm name + complexity
 
 ---
 
