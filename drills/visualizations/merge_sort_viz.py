@@ -32,6 +32,7 @@ class MergeSortVisualization(Scene):
     
     - Divide phase: bars separate and color-code visibly
     - Merge phase: bars visibly rearrange to sorted order
+    - Resolution: 800x600
     """
 
     def construct(self):
@@ -53,14 +54,15 @@ class MergeSortVisualization(Scene):
         self.wait(2)
 
     def create_bar_chart(self, values: list, max_val: int) -> VGroup:
-        """Create bars aligned at y=0."""
+        """Create bars aligned at y=0 with larger scale."""
         bars = VGroup()
         
         bar_width = 0.6
         spacing = 0.3
-        scale = 3.5 / max_val
+        scale = 3.2 / max_val  # Increased from 2.8 to 3.2
         total_width = len(values) * (bar_width + spacing)
         start_x = -total_width / 2
+        baseline_y = -0.8  # Move baseline down from 0 to -0.8
         
         for i, val in enumerate(values):
             height = val * scale
@@ -73,7 +75,7 @@ class MergeSortVisualization(Scene):
                 fill_opacity=0.7,
                 stroke_width=2,
             )
-            bar.shift([x, height / 2, 0])
+            bar.shift([x, baseline_y + height / 2, 0])
             bars.add(bar)
         
         return bars
@@ -85,13 +87,6 @@ class MergeSortVisualization(Scene):
         Bars separate into groups and change colors to show division.
         """
         mid = len(values) // 2
-        
-        # Create label - position at top but within view
-        label = Text("Divide phase", font_size=24, color=RED, font="Verdana", stroke_width=1.5, stroke_color=RED)
-        label.to_edge(UP)
-        label.shift(UP * 0.3)
-        self.add(label)
-        self.wait(0.5)
         
         # Animate left half moving left and turning red
         left_anims = []
@@ -124,7 +119,6 @@ class MergeSortVisualization(Scene):
         if back_anims:
             self.play(AnimationGroup(*back_anims, lag_ratio=0.1), run_time=1.0)
         
-        self.remove(label)
         self.wait(0.5)
 
     def merge_phase(self, bars: VGroup, values: list, max_val: int):
@@ -134,18 +128,12 @@ class MergeSortVisualization(Scene):
         Bars animate to sorted positions and heights.
         """
         sorted_vals = sorted(values)
-        scale = 3.5 / max_val
+        scale = 3.2 / max_val
         bar_width = 0.6
         spacing = 0.3
         total_width = len(values) * (bar_width + spacing)
         start_x = -total_width / 2
-        
-        # Create label - position at top but within view
-        label = Text("Merge phase", font_size=24, color=GREEN, font="Verdana", stroke_width=1.5, stroke_color=GREEN)
-        label.to_edge(UP)
-        label.shift(UP * 0.3)
-        self.add(label)
-        self.wait(0.5)
+        baseline_y = -0.8
         
         # Show comparison animations with movement
         comparisons = [
@@ -183,7 +171,7 @@ class MergeSortVisualization(Scene):
                 fill_opacity=0.7,
                 stroke_width=2,
             )
-            new_bar.shift([x, new_height / 2, 0])
+            new_bar.shift([x, baseline_y + new_height / 2, 0])
             
             # Animate transformation
             animations.append(old_bar.animate.become(new_bar))
@@ -201,5 +189,4 @@ class MergeSortVisualization(Scene):
                 run_time=0.2,
             )
         
-        self.remove(label)
         self.wait(1)

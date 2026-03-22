@@ -26,10 +26,12 @@ def run_visualization():
     # Create media directory if it doesn't exist
     media_dir.mkdir(parents=True, exist_ok=True)
 
+    # Use custom resolution 800x600 with 30fps
     cmd = [
         "manim",
-        "-qh",  # high quality (1080p)
-        "-p",   # preview after rendering
+        "-r", "800,600",  # custom resolution 800x600
+        "--fps", "30",     # frame rate 30fps
+        "-p",              # preview after rendering
         "--media_dir",
         str(media_dir),
         str(viz_script),
