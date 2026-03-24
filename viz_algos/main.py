@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from viz_algos.render import render_frame
 from viz_algos.algos.bubble_sort import bubble_sort
+from viz_algos.algos.merge_sort import merge_sort
 
 
 # Configuration
@@ -21,17 +22,28 @@ FPS = 10  # Frames per second for animation
 
 
 def get_user_input():
-    """Get array size from user input."""
+    """Get array size and algorithm choice from user input."""
     while True:
         try:
-            size = input("Enter number of items to sort (5-30): ")
-            size = int(size)
-            if 5 <= size <= 30:
-                return size
-            else:
-                print("Please enter a number between 5 and 30.")
+            algo = input("Choose sorting algorithm (1=Bubble Sort, 2=Merge Sort): ")
+            algo = int(algo)
+            if algo not in [1, 2]:
+                print("Please enter 1 or 2.")
+                continue
         except ValueError:
             print("Please enter a valid number.")
+            continue
+        
+        while True:
+            try:
+                size = input("Enter number of items to sort (5-30): ")
+                size = int(size)
+                if 5 <= size <= 30:
+                    return algo, size
+                else:
+                    print("Please enter a number between 5 and 30.")
+            except ValueError:
+                print("Please enter a valid number.")
 
 
 def generate_array(size):
@@ -43,19 +55,26 @@ def main():
     """Initialize and run the visualization."""
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-    pygame.display.set_caption("Sorting Algorithm Visualizer - Bubble Sort")
     clock = pygame.time.Clock()
 
-    # Get user input for array size
-    array_size = get_user_input()
+    # Get user input for algorithm and array size
+    algo_choice, array_size = get_user_input()
     arr = generate_array(array_size)
+
+    # Select algorithm and set caption
+    if algo_choice == 1:
+        sorter = bubble_sort(arr)
+        algo_name = "Bubble Sort"
+    else:
+        sorter = merge_sort(arr)
+        algo_name = "Merge Sort"
+
+    pygame.display.set_caption(f"Sorting Algorithm Visualizer - {algo_name}")
 
     # Theme management
     theme = 'dark'
     themes = ['light', 'dark']
 
-    # Initialize sorting algorithm generator
-    sorter = bubble_sort(arr)
     current_event = None
     done = False
 
@@ -68,7 +87,10 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     # Reset and restart
-                    sorter = bubble_sort(arr)
+                    if algo_choice == 1:
+                        sorter = bubble_sort(arr)
+                    else:
+                        sorter = merge_sort(arr)
                     current_event = None
                     done = False
                 elif event.key == pygame.K_t:

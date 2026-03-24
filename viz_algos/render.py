@@ -67,7 +67,7 @@ def draw_bars(surface, arr, highlighted_indices=None, event_type=None, theme='da
         surface: pygame surface
         arr: array of values to visualize
         highlighted_indices: list of indices to highlight
-        event_type: 'compare', 'swap', or 'done' to determine color
+        event_type: 'compare', 'swap', 'merge', or 'done' to determine color
         theme: 'light' or 'dark' theme
     """
     if highlighted_indices is None:
@@ -89,6 +89,8 @@ def draw_bars(surface, arr, highlighted_indices=None, event_type=None, theme='da
                 color = colors['SWAP_COLOR']
             elif event_type == 'compare':
                 color = colors['COMPARE_COLOR']
+            elif event_type == 'merge':
+                color = colors['SWAP_COLOR']
             elif event_type == 'done':
                 color = colors['DONE_COLOR']
             else:
@@ -108,7 +110,7 @@ def render_frame(surface, arr, highlighted_indices=None, event_type=None, theme=
         surface: pygame surface
         arr: array to visualize
         highlighted_indices: indices to highlight
-        event_type: type of operation ('compare', 'swap', 'done')
+        event_type: type of operation ('compare', 'swap', 'merge', 'done')
         theme: 'light' or 'dark' theme
     """
     draw_background(surface, theme)
