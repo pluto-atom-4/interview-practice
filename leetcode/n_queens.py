@@ -48,13 +48,31 @@ board scans and make conflict detection O(1).
 
 1. Initialize an empty board, result list, and three constraint sets (columns, 
    positive diagonals, negative diagonals).
+
+   **Why 2D List?** Direct coordinate indexing `board[r][c]` provides O(1) access with
+   no hash overhead, unlike dictionary/hash table alternatives. The structure naturally
+   maps to chessboard semantics and stores only the N² cells needed with no metadata
+   overhead.
+
 2. Define a recursive backtrack function that accepts the current row index.
-3. Base case: If row equals N, convert the current board to strings and append 
-   to results.
-4. For each column in the current row: check if placement is valid by testing the 
+
+3. Base case: If row equals N, convert the current board to the required output
+      format: a list of strings where each string represents one row. Use
+      `["".join(row) for row in board]` to join each row's characters into a single
+      string, then append to results.
+
+      **Why this conversion?** The problem requires output as `List[List[str]]`, not
+      `List[List[List[str]]]`. Each row must be a single string (e.g., `"Q.Q."`) rather
+      than a list of characters (e.g., `["Q", ".", "Q", "."]`). The `.join()` method
+      concatenates characters into a string efficiently.
+
+4. For each column in the current row: check if placement is valid by testing the
    three constraint sets.
+
 5. If valid, place the queen, add constraints to sets, and recurse to the next row.
+
 6. After recursion returns, undo the placement and remove constraints (backtrack).
+
 7. Return the results list containing all valid configurations.
 
 ## Summary Variations

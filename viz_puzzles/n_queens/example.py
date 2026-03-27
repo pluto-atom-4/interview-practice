@@ -4,8 +4,8 @@ Example usage of the N-Queens visualization.
 This script demonstrates different ways to use the N-Queens solver and renderer.
 """
 
-from .algos import solve_n_queens_visual
-from .render import NQueensRenderer
+from viz_puzzles.n_queens.algos import solve_n_queens_visual
+from viz_puzzles.n_queens.render import NQueensRenderer
 
 
 def example_basic():

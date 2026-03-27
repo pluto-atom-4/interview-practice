@@ -13,6 +13,25 @@ A pygame-based interactive visualization of the N-Queens puzzle solving algorith
   - **LEFT/RIGHT**: Navigate between solutions
   - **Close Window**: Exit
 
+## Architecture Flow
+
+```
+main.py
+  ├─ Parses CLI arguments
+  ├─ Prompts user for N
+  └─ Creates: NQueensRenderer(n, theme)
+        └─ solve_n_queens_visual(n) [generator]
+              ├─ Yields: check, place, remove events
+              └─ Yields: solution events
+        
+Renderer.render(event_generator)
+  ├─ Main pygame loop (60 FPS)
+  ├─ Consumes events from generator (50ms interval)
+  ├─ Updates board state
+  └─ Renders visual representation
+```
+
+
 ## Quick Start
 
 ### CLI Entry Point (Easiest)
