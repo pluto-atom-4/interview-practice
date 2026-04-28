@@ -95,7 +95,7 @@ def maxRegion(grid: List[List[int]]) -> int:
     max_size = 0
     visited = set()
 
-    def get_region_size(r: int, c: int) -> int:
+    def dfs(r: int, c: int) -> int:
         # Boundary check and check if cell is filled (1) or already visited
         if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] == 0 or (r, c) in visited:
             return 0
@@ -106,7 +106,7 @@ def maxRegion(grid: List[List[int]]) -> int:
 
         # Check all 8 directions using static directions array
         for dr, dc in DIRECTIONS:
-            size += get_region_size(r + dr, c + dc)
+            size += dfs(r + dr, c + dc)
 
         return size
 
@@ -115,7 +115,7 @@ def maxRegion(grid: List[List[int]]) -> int:
         for c in range(cols):
             if grid[r][c] == 1 and (r, c) not in visited:
                 # If we find a filled cell, start a DFS to find the total region size
-                current_region_size = get_region_size(r, c)
+                current_region_size = dfs(r, c)
                 max_size = max(max_size, current_region_size)
 
     return max_size
